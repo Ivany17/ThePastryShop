@@ -26,19 +26,11 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
-List<Product> products = new List<Product>
-{
-    new Product {Id = 1, Category = "Cakes", Name = "First Cake", Description = "First cake in the list", Price = 282},
-    new Product {Id = 2, Category = "Pasteries", Name = "First Pastery", Description = "First pastery in the list", Price = 115},
-    new Product {Id = 3, Category = "Cookie", Name = "First Cookie", Description = "First cookie in the list", Price = 74},
-};
-int nextId = 4;
+app.MapGet("/api/products", (AppDbContext dbContext) => Results.Ok(dbContext.Products));
 
-app.MapGet("/api/products", () => Results.Ok(products));
-
-app.MapGet("/api/products/{id}", (int id) =>
+app.MapGet("/api/products/{id}", (AppDbContext dbContext, int id) =>
 {
-    var getOneProduct = products.FirstOrDefault(p => p.Id == id);
+    var getOneProduct = dbContext.Products.FirstOrDefault(p => p.Id == id);
     if (getOneProduct != null)
     {
         return Results.Ok(getOneProduct);
@@ -46,27 +38,28 @@ app.MapGet("/api/products/{id}", (int id) =>
     return Results.NotFound();
 });
 
-app.MapPost("/api/products", (ProductFromBody productFromBody) =>
+app.MapPost("/api/products", async (AppDbContext dbContext, ProductFromBody productFromBody) =>
 {
     var newProduct = new Product
     {
-        Id = nextId++,
         Category = productFromBody.Category,
         Name = productFromBody.Name,
         PhotoLinks = productFromBody.PhotoLinks,
         Description = productFromBody.Description,
         Price = productFromBody.Price,
     };
-    products.Add(newProduct);
+    dbContext.Products.Add(newProduct);
+    await dbContext.SaveChangesAsync();
     return Results.Ok(newProduct);
 });
 
-app.MapDelete("/api/products/{id}", (int id) =>
+app.MapDelete("/api/products/{id}", async (AppDbContext dbContext, int id) =>
 {
-    var deleteOneProduct = products.FirstOrDefault(p => p.Id == id);
+    var deleteOneProduct = dbContext.Products.FirstOrDefault(p => p.Id == id);
     if (deleteOneProduct != null)
     {
-        products.Remove(deleteOneProduct);
+        dbContext.Products.Remove(deleteOneProduct);
+        await dbContext.SaveChangesAsync();
         return Results.Ok(deleteOneProduct);
     }
     return Results.NotFound();
