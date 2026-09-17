@@ -1,3 +1,4 @@
+//app.js
 const productsContainer = document.getElementById('products-container');
 let addBtn;
 
