@@ -1,4 +1,4 @@
-//admin.html
+<!-- admin.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,20 +8,21 @@
     <title>The Pastry Shop — Admin</title>
 </head>
 <body>
+    <div id="form-container">
+        <input type="text" id="inputNameOfTheProduct" placeholder="Name Of The Product">
+        <textarea id="descriptionOfTheProduct" placeholder="Description Of The Product"></textarea>
+        <input type="number" id="inputPriceOfTheProduct" placeholder="Price Of The Product">
+        <label for="product-categories">Categories</label>
+        <select id="product-categories" name="categories">
+            <option value="cake">Cake</option>
+            <option value="pastry">Pastry</option>
+            <option value="cookie">Cookie</option>
+        </select>
+        <input type="url" id="inputPhotoOfTheProduct" placeholder="Photo Of The Product">
+        <button id="addProductBtn">Add Product</button>
+    </div>
     <div id="products-container">
-        <div id="form-container">
-            <input type="text" id="inputNameOfTheProduct" placeholder="Name Of The Product">
-            <textarea id="descriptionOfTheProduct" placeholder="Description Of The Product"></textarea>
-            <input type="number" id="inputPriceOfTheProduct" placeholder="Price Of The Product">
-            <label for="product-categories">Categories</label>
-            <select id="product-categories" name="categories">
-                <option value="cake">Cake</option>
-                <option value="pastry">Pastry</option>
-                <option value="cookie">Cookie</option>
-            </select>
-            <input type="url" id="inputPhotoOfTheProduct" placeholder="Photo Of The Product">
-            <button id="addProductBtn">Add Product</button>
-        </div>
+
     </div>
 
     <script src="admin.js"></script>
