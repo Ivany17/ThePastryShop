@@ -25,6 +25,23 @@
 
     </div>
 
+    <div class="modal-overlay">
+        <div class="modal-content">
+            <input type="text" id="editNameOfTheProduct" placeholder="Change Name Of The Product">
+            <textarea id="editDescriptionOfTheProduct" placeholder="Change Description Of The Product"></textarea>
+            <input type="number" id="editPriceOfTheProduct" placeholder="Change Price Of The Product">
+            <label for="edit-product-categories">Categories</label>
+            <select id="edit-product-categories" name="categories">
+                <option value="cake">Cake</option>
+                <option value="pastry">Pastry</option>
+                <option value="cookie">Cookie</option>
+            </select>
+            <input type="url" id="editPhotoOfTheProduct" placeholder="Change Photo Of The Product">
+            <button id="editProductBtn">Edit Product</button>
+            <button id="cancelBtn">Cancel</button>
+        </div>
+    </div>
+
     <script src="admin.js"></script>
 </body>
 </html>
