@@ -65,6 +65,22 @@ app.MapDelete("/api/products/{id}", async (AppDbContext dbContext, int id) =>
     return Results.NotFound();
 });
 
+app.MapPut("/api/products/{id}", async (AppDbContext dbContext, int id, ProductFromBody productFromBody) =>
+{
+    var editOneProduct = dbContext.Products.FirstOrDefault(p => p.Id == id);
+    if (editOneProduct != null)
+    {
+        editOneProduct.Name = productFromBody.Name;
+        editOneProduct.Category = productFromBody.Category;
+        editOneProduct.Description = productFromBody.Description;
+        editOneProduct.Price = productFromBody.Price;
+        editOneProduct.PhotoLinks = productFromBody.PhotoLinks;
+        await dbContext.SaveChangesAsync();
+        return Results.Ok(editOneProduct);
+    }
+    return Results.NotFound();
+});
+
 app.Run();
 
 public class ProductFromBody

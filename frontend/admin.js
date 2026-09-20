@@ -13,8 +13,9 @@ const editDescriptionOfTheProduct = document.getElementById('editDescriptionOfTh
 const editPriceOfTheProduct = document.getElementById('editPriceOfTheProduct');
 const editProductCategories = document.getElementById('edit-product-categories');
 const editPhotoOfTheProduct = document.getElementById('editPhotoOfTheProduct');
-const editProductBtn = document.getElementById('editProductBtn');
+const saveChangesBtn = document.getElementById('saveChangesBtn');
 const cancelBtn = document.getElementById('cancelBtn');
+let currentEditId;
 
 async function loadAdminProducts(){
     const getResponse = await fetch("http://localhost:5160/api/products");
@@ -55,6 +56,7 @@ async function loadAdminProducts(){
             editProductCategories.value = editProduct.category;
             editPhotoOfTheProduct.value = editProduct.photoLinks;
             modalOverlay.style.display = 'flex';
+            currentEditId = editProduct.id;
         });
     });
 };
@@ -76,5 +78,26 @@ addProductBtn.addEventListener('click', async () => {
 });
 
 modalOverlay.style.display = 'none'; // hide the modal window
+
+saveChangesBtn.addEventListener('click', async() => {
+    const changedProduct = {
+        Name: editNameOfTheProduct.value,
+        Category: editProductCategories.value,
+        Description: editDescriptionOfTheProduct.value,
+        Price: parseFloat(editPriceOfTheProduct.value),
+        PhotoLinks: [editPhotoOfTheProduct.value],
+    }
+    const putResponse = await fetch(`http://localhost:5160/api/products/${currentEditId}`, {
+        method: 'PUT',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify(changedProduct),
+    });
+    loadAdminProducts();
+    modalOverlay.style.display = 'none'; // hide the modal window
+});
+
+cancelBtn.addEventListener('click', () => {
+    modalOverlay.style.display = 'none'; // hide the modal window
+});
 
 loadAdminProducts();
