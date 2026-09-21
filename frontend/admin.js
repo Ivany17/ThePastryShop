@@ -1,4 +1,6 @@
 //admin.js
+renderHeader("admin");
+
 const productsContainer = document.getElementById('products-container');
 const inputNameOfTheProduct = document.getElementById('inputNameOfTheProduct');
 const descriptionOfTheProduct = document.getElementById('descriptionOfTheProduct');
@@ -24,6 +26,7 @@ async function loadAdminProducts(){
         return `
             <div class="product-card">
                 <h3>${p.name}</h3>
+                <p>${p.category}</p>
                 <p>${p.description}</p>
                 <p>${p.price} ₴</p>
                 <button class="removeBtn" data-id="${p.id}" data-name="${p.name}">Remove</button>
