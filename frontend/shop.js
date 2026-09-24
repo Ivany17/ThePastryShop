@@ -6,6 +6,21 @@ const headerCakesBtn = document.getElementById('headerCakesBtn');
 headerCakesBtn.addEventListener('click', () => {
     const filteredForCake = data.filter(p => p.category.toLowerCase() === "cake");
     renderProducts(filteredForCake);
+    findAddBtn();
+});
+
+const headerPasteriesBtn = document.getElementById('headerPasteriesBtn');
+headerPasteriesBtn.addEventListener('click', () => {
+    const filteredForPasteries = data.filter(p => p.category.toLowerCase() === "pastry");
+    renderProducts(filteredForPasteries);
+    findAddBtn();
+});
+
+const headerCookiesBtn = document.getElementById('headerCookiesBtn');
+headerCookiesBtn.addEventListener('click', () => {
+    const filteredForCookies = data.filter(p => p.category.toLowerCase() === "cookie");
+    renderProducts(filteredForCookies);
+    findAddBtn();
 });
 
 const productsContainer = document.getElementById('products-container');
@@ -15,12 +30,7 @@ async function loadProducts() {
     const getResponse = await fetch("http://localhost:5160/api/products");
     data = await getResponse.json();
     renderProducts(data);
-    addBtn = document.querySelectorAll(".addBtn");
-    addBtn.forEach(b => {
-        b.addEventListener('click', () => {
-            console.log(`${b.dataset.id}`);
-        });
-    });
+    findAddBtn();
 }
 
 function renderProducts(productsArray){
@@ -36,6 +46,15 @@ function renderProducts(productsArray){
         `;
     }).join("");
     productsContainer.innerHTML = productsHTML;
+}
+
+function findAddBtn(){
+    addBtn = document.querySelectorAll(".addBtn");
+    addBtn.forEach(b => {
+        b.addEventListener('click', () => {
+            console.log(`${b.dataset.id}`);
+        });
+    });
 }
 
 loadProducts();
