@@ -2,6 +2,12 @@
 let data;
 renderHeader("shop");
 
+const headerAllBtn = document.getElementById('headerAllBtn');
+headerAllBtn.addEventListener('click', () => {
+    renderProducts(data);  
+    findAddBtn();
+});
+
 const headerCakesBtn = document.getElementById('headerCakesBtn');
 headerCakesBtn.addEventListener('click', () => {
     const filteredForCake = data.filter(p => p.category.toLowerCase() === "cake");
@@ -29,16 +35,17 @@ let addBtn;
 async function loadProducts() {
     const getResponse = await fetch("http://localhost:5160/api/products");
     data = await getResponse.json();
-    renderProducts(data);
+    renderProducts(data.sort((a, b) => b.id - a.id)); // Sort products from newest to oldest
     findAddBtn();
 }
 
 function renderProducts(productsArray){
     const productsHTML = productsArray.map((p) => {
+        // Capitalize first letter in name and category for display only (data stays lowercase)
         return `
             <div class="product-card">
-                <h3>${p.name}</h3>
-                <p>${p.category}</p>
+                <h3>${p.name.toLowerCase().split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')}</h3>
+                <p>${p.category.charAt(0).toUpperCase() + p.category.slice(1)}</p> 
                 <p>${p.description}</p>
                 <p>${p.price} ₴</p>
                 <button class="addBtn" data-id="${p.id}">Add</button>
