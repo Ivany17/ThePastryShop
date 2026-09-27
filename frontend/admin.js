@@ -20,6 +20,12 @@ const cancelBtn = document.getElementById('cancelBtn');
 let currentEditId;
 let data;
 
+const searchProducts = document.getElementById('searchProducts');
+searchProducts.addEventListener('input', () => {
+    const filteredByName = data.filter(p => p.name.toLowerCase().includes(searchProducts.value.toLowerCase()));
+    renderAdminProducts(filteredByName);
+});
+
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
     renderAdminProducts(data);  

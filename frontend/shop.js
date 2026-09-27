@@ -2,6 +2,12 @@
 let data;
 renderHeader("shop");
 
+const searchProducts = document.getElementById('searchProducts');
+searchProducts.addEventListener('input', () => {
+    const filteredByName = data.filter(p => p.name.toLowerCase().includes(searchProducts.value.toLowerCase()));
+    renderProducts(filteredByName);
+});
+
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
     renderProducts(data);  
