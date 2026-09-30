@@ -24,6 +24,7 @@ const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
     const filteredByName = data.filter(p => p.name.toLowerCase().includes(searchProducts.value.toLowerCase()));
     renderAdminProducts(filteredByName);
+    findRemoveAndEditBtns();
 });
 
 const headerAllBtn = document.getElementById('headerAllBtn');

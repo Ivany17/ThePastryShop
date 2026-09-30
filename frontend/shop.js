@@ -2,10 +2,15 @@
 let data;
 renderHeader("shop");
 
+const queryString = window.location.search;
+const params = new URLSearchParams(queryString);
+console.log(params); 
+
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
     const filteredByName = data.filter(p => p.name.toLowerCase().includes(searchProducts.value.toLowerCase()));
     renderProducts(filteredByName);
+    findAddBtn();
 });
 
 const headerAllBtn = document.getElementById('headerAllBtn');
