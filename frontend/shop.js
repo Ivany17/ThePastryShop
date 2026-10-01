@@ -2,9 +2,10 @@
 let data;
 renderHeader("shop");
 
-const queryString = window.location.search;
-const params = new URLSearchParams(queryString);
-console.log(params); 
+const queryString = window.location.search; // get queryString - the part of address with "?" and further
+const params = new URLSearchParams(queryString); // make the object from the string
+const categoryParam = params.get('category'); // get the value from the category to filter by category
+console.log(categoryParam); 
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
@@ -47,6 +48,8 @@ async function loadProducts() {
     const getResponse = await fetch("http://localhost:5160/api/products");
     data = await getResponse.json();
     renderProducts(data.sort((a, b) => b.id - a.id)); // Sort products from newest to oldest
+    const filterByCategories = data.filter(p => p.category.toLowerCase() === categoryParam);
+    console.log(filterByCategories);
     findAddBtn();
 }
 
