@@ -7,11 +7,11 @@ headerCakesBtn.addEventListener('click', () => {
 });
 
 const headerPasteriesBtn = document.getElementById('headerPasteriesBtn');
-headerCakesBtn.addEventListener('click', () => {
+headerPasteriesBtn.addEventListener('click', () => {
     window.location.href = "shop.html?category=pastry";
 });
 
 const headerCookiesBtn = document.getElementById('headerCookiesBtn');
-headerCakesBtn.addEventListener('click', () => {
+headerCookiesBtn.addEventListener('click', () => {
     window.location.href = "shop.html?category=cookie";
 });

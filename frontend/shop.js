@@ -5,7 +5,6 @@ renderHeader("shop");
 const queryString = window.location.search; // get queryString - the part of address with "?" and further
 const params = new URLSearchParams(queryString); // make the object from the string
 const categoryParam = params.get('category'); // get the value from the category to filter by category
-console.log(categoryParam); 
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
@@ -47,9 +46,11 @@ let addBtn;
 async function loadProducts() {
     const getResponse = await fetch("http://localhost:5160/api/products");
     data = await getResponse.json();
-    renderProducts(data.sort((a, b) => b.id - a.id)); // Sort products from newest to oldest
     const filterByCategories = data.filter(p => p.category.toLowerCase() === categoryParam);
-    console.log(filterByCategories);
+    renderProducts(filterByCategories.sort((a, b) => b.id - a.id)); // Sort products from newest to oldest
+    if(categoryParam === null){
+        renderProducts(data.sort((a, b) => b.id - a.id)); 
+    }
     findAddBtn();
 }
 
