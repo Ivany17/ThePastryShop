@@ -32,6 +32,6 @@ const navHTML =
     `<nav>
         <button id="headerAllBtn">All</button>
         <button id="headerCakesBtn">Cakes</button>
-        <button id="headerPasteriesBtn">Pasteries</button>
+        <button id="headerPastriesBtn">Pastries</button>
         <button id="headerCookiesBtn">Cookies</button>
     </nav>`

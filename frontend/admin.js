@@ -40,8 +40,8 @@ headerCakesBtn.addEventListener('click', () => {
     findRemoveAndEditBtns();
 });
 
-const headerPasteriesBtn = document.getElementById('headerPasteriesBtn');
-headerPasteriesBtn.addEventListener('click', () => {
+const headerPastriesBtn = document.getElementById('headerPastriesBtn');
+headerPastriesBtn.addEventListener('click', () => {
     const filteredForPasteries = data.filter(p => p.category.toLowerCase() === "pastry");
     renderAdminProducts(filteredForPasteries);
     findRemoveAndEditBtns();

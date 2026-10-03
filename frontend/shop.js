@@ -1,5 +1,6 @@
 //shop.js
 let data;
+let currentProductsByCategory; // stores the current list of products in certain category
 renderHeader("shop");
 
 const queryString = window.location.search; // get queryString - the part of address with "?" and further
@@ -8,36 +9,41 @@ const categoryParam = params.get('category'); // get the value from the category
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
-    const filteredByName = data.filter(p => p.name.toLowerCase().includes(searchProducts.value.toLowerCase()));
+    const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(searchProducts.value.toLowerCase())); // search only in certain category
     renderProducts(filteredByName);
     findAddBtn();
 });
 
+function showCurrentListOfProducts(currentListOfProducts){
+    currentProductsByCategory = currentListOfProducts;
+    renderProducts(currentProductsByCategory.sort((a, b) => b.id - a.id)); // Sort products from newest to oldest
+    findAddBtn();
+    searchProducts.value = "";
+}
+
+function showFilteredProductsByCategory(category){
+    const currentList = data.filter(p => p.category.toLowerCase() === category);
+    showCurrentListOfProducts(currentList);
+}
+
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
-    renderProducts(data);  
-    findAddBtn();
+    showCurrentListOfProducts(data);
 });
 
 const headerCakesBtn = document.getElementById('headerCakesBtn');
 headerCakesBtn.addEventListener('click', () => {
-    const filteredForCake = data.filter(p => p.category.toLowerCase() === "cake");
-    renderProducts(filteredForCake);
-    findAddBtn();
+    showFilteredProductsByCategory("cake");
 });
 
-const headerPasteriesBtn = document.getElementById('headerPasteriesBtn');
-headerPasteriesBtn.addEventListener('click', () => {
-    const filteredForPasteries = data.filter(p => p.category.toLowerCase() === "pastry");
-    renderProducts(filteredForPasteries);
-    findAddBtn();
+const headerPastriesBtn = document.getElementById('headerPastriesBtn');
+headerPastriesBtn.addEventListener('click', () => {
+    showFilteredProductsByCategory("pastry");
 });
 
 const headerCookiesBtn = document.getElementById('headerCookiesBtn');
 headerCookiesBtn.addEventListener('click', () => {
-    const filteredForCookies = data.filter(p => p.category.toLowerCase() === "cookie");
-    renderProducts(filteredForCookies);
-    findAddBtn();
+    showFilteredProductsByCategory("cookie");
 });
 
 const productsContainer = document.getElementById('products-container');
@@ -47,11 +53,11 @@ async function loadProducts() {
     const getResponse = await fetch("http://localhost:5160/api/products");
     data = await getResponse.json();
     const filterByCategories = data.filter(p => p.category.toLowerCase() === categoryParam);
-    renderProducts(filterByCategories.sort((a, b) => b.id - a.id)); // Sort products from newest to oldest
-    if(categoryParam === null){
-        renderProducts(data.sort((a, b) => b.id - a.id)); 
+    if(categoryParam === null){ // null means the absence of a category
+        showCurrentListOfProducts(data);
+    } else {
+        showCurrentListOfProducts(filterByCategories);
     }
-    findAddBtn();
 }
 
 function renderProducts(productsArray){
