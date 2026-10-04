@@ -27,6 +27,8 @@ app.UseCors("AllowFrontend");
 
 app.UseHttpsRedirection();
 
+List<CartItem> cart = new List<CartItem> { };
+
 app.MapGet("/api/products", (AppDbContext dbContext) => Results.Ok(dbContext.Products));
 
 app.MapGet("/api/products/{id}", (AppDbContext dbContext, int id) =>
@@ -81,6 +83,8 @@ app.MapPut("/api/products/{id}", async (AppDbContext dbContext, int id, ProductF
     }
     return Results.NotFound();
 });
+
+app.MapGet("/api/cart", (List<CartItem> cart) => Results.Ok(cart));
 
 app.Run();
 

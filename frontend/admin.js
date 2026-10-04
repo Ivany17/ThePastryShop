@@ -9,6 +9,7 @@ const productCategories = document.getElementById('product-categories');
 const inputPhotoOfTheProduct = document.getElementById('inputPhotoOfTheProduct');
 const addProductBtn = document.getElementById('addProductBtn');
 let removeBtn;
+let editBtn;
 const modalOverlay = document.querySelector('.modal-overlay');
 const editNameOfTheProduct = document.getElementById('editNameOfTheProduct');
 const editDescriptionOfTheProduct = document.getElementById('editDescriptionOfTheProduct');
@@ -19,46 +20,51 @@ const saveChangesBtn = document.getElementById('saveChangesBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 let currentEditId;
 let data;
+let currentProductsByCategory; // stores the current list of products in certain category
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
-    const filteredByName = data.filter(p => p.name.toLowerCase().includes(searchProducts.value.toLowerCase()));
+    const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(searchProducts.value.toLowerCase()));
     renderAdminProducts(filteredByName);
     findRemoveAndEditBtns();
 });
 
+function showCurrentListOfProducts(currentListOfProducts){
+    currentProductsByCategory = currentListOfProducts;
+    renderAdminProducts(currentProductsByCategory);
+    findRemoveAndEditBtns();
+    searchProducts.value = "";
+}
+
+function showFilteredProductsByCategory(category){
+    const currentList = data.filter(p => p.category.toLowerCase() === category);
+    showCurrentListOfProducts(currentList);
+}
+
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
-    renderAdminProducts(data);  
-    findRemoveAndEditBtns();
+    showCurrentListOfProducts(data);
 });
 
 const headerCakesBtn = document.getElementById('headerCakesBtn');
 headerCakesBtn.addEventListener('click', () => {
-    const filteredForCake = data.filter(p => p.category.toLowerCase() === "cake");
-    renderAdminProducts(filteredForCake);
-    findRemoveAndEditBtns();
+    showFilteredProductsByCategory("cake");
 });
 
 const headerPastriesBtn = document.getElementById('headerPastriesBtn');
 headerPastriesBtn.addEventListener('click', () => {
-    const filteredForPasteries = data.filter(p => p.category.toLowerCase() === "pastry");
-    renderAdminProducts(filteredForPasteries);
-    findRemoveAndEditBtns();
+    showFilteredProductsByCategory("pastry");
 });
 
 const headerCookiesBtn = document.getElementById('headerCookiesBtn');
 headerCookiesBtn.addEventListener('click', () => {
-    const filteredForCookies = data.filter(p => p.category.toLowerCase() === "cookie");
-    renderAdminProducts(filteredForCookies);
-    findRemoveAndEditBtns();
+    showFilteredProductsByCategory("cookie");
 });
 
 async function loadAdminProducts(){
     const getResponse = await fetch("http://localhost:5160/api/products");
     data = await getResponse.json();
-    renderAdminProducts(data);
-    findRemoveAndEditBtns();
+    showCurrentListOfProducts(data);
 };
 
 function renderAdminProducts(productsArray){
@@ -102,7 +108,7 @@ function findRemoveAndEditBtns(){
             editNameOfTheProduct.value = editProduct.name;
             editDescriptionOfTheProduct.value = editProduct.description;
             editPriceOfTheProduct.value = editProduct.price;
-            editProductCategories.value = editProduct.category;
+            editProductCategories.value = editProduct.category.toLowerCase(); // to compare two values from drop-down list and from database, where one value can be with the capital letter
             editPhotoOfTheProduct.value = editProduct.photoLinks;
             modalOverlay.style.display = 'flex';
             currentEditId = editProduct.id;
