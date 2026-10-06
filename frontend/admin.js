@@ -1,5 +1,6 @@
 //admin.js
 renderHeader("admin");
+renderFooter("admin");
 
 const productsContainer = document.getElementById('products-container');
 const inputNameOfTheProduct = document.getElementById('inputNameOfTheProduct');

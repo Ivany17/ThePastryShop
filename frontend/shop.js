@@ -2,6 +2,7 @@
 let data;
 let currentProductsByCategory; // stores the current list of products in certain category
 renderHeader("shop");
+renderFooter("shop");
 
 const queryString = window.location.search; // get queryString - the part of address with "?" and further
 const params = new URLSearchParams(queryString); // make the object from the string

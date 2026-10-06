@@ -1,5 +1,6 @@
 //app.js
 renderHeader("welcome");
+renderFooter("welcome");
 
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {

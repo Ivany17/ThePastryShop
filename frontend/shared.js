@@ -35,3 +35,30 @@ const navHTML =
         <button id="headerPastriesBtn">Pastries</button>
         <button id="headerCookiesBtn">Cookies</button>
     </nav>`
+
+function renderFooter(page){
+    const footer = document.getElementById('footer-container');
+    switch (page) {
+        case "welcome":
+            footer.innerHTML = logoHTML;
+            break;
+        case "shop":
+            console.log('Here is the shop-page');
+            break;
+        case "admin":
+            console.log('Here is the admin-page');
+            break;
+        default:
+            console.log("Wrong page");
+    }
+}
+
+const addressHTML = 
+    `<address>
+        <p>Osvita street, 35</p>
+        <p>+(380)957680933</p>
+        <p>8 am - 5 pm</p>
+    </address>`
+
+const copyrightHTML =
+    `<p>&copy; Charodiya, 2026</p>`
