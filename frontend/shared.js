@@ -38,15 +38,17 @@ const navHTML =
 
 function renderFooter(page){
     const footer = document.getElementById('footer-container');
+    // these three lines are the same for three files
+    footer.innerHTML = logoHTML;
+    footer.innerHTML += addressHTML;
+    footer.innerHTML += copyrightHTML; 
     switch (page) {
+        // remove "break" from "welcome" because it has the same code with "shop"
         case "welcome":
-            footer.innerHTML = logoHTML;
-            break;
         case "shop":
-            console.log('Here is the shop-page');
+            footer.innerHTML += `<a href="admin.html">To Admin</a>`;
             break;
         case "admin":
-            console.log('Here is the admin-page');
             break;
         default:
             console.log("Wrong page");
@@ -56,7 +58,7 @@ function renderFooter(page){
 const addressHTML = 
     `<address>
         <p>Osvita street, 35</p>
-        <p>+(380)957680933</p>
+        <p>+380 95 768 09 33</p>
         <p>8 am - 5 pm</p>
     </address>`
 

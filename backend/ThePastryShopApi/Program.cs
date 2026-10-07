@@ -84,7 +84,7 @@ app.MapPut("/api/products/{id}", async (AppDbContext dbContext, int id, ProductF
     return Results.NotFound();
 });
 
-app.MapGet("/api/cart", (List<CartItem> cart) => Results.Ok(cart));
+app.MapGet("/api/cart", () => Results.Ok(cart));
 
 app.Run();
 
