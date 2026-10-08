@@ -62,6 +62,10 @@ async function loadProducts() {
 }
 
 function renderProducts(productsArray){
+    if(productsArray.length === 0){
+        productsContainer.innerHTML = `This item is not found`;
+        return;
+    }
     const productsHTML = productsArray.map((p) => {
         // Capitalize first letter in name and category for display only (data stays lowercase)
         return `
