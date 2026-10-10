@@ -85,6 +85,16 @@ app.MapPut("/api/products/{id}", async (AppDbContext dbContext, int id, ProductF
 });
 
 app.MapGet("/api/cart", () => Results.Ok(cart));
+app.MapPost("/api/cart/{id}", (AppDbContext dbContext, int id) =>
+{
+    var addOneProductInTheCart = dbContext.Products.FirstOrDefault(p => p.Id == id);
+    if (addOneProductInTheCart != null)
+    {
+        var findTheProduct = cart.FirstOrDefault(cartItem => cartItem.ProductItem?.Id == id);
+        return Results.Ok(addOneProductInTheCart);
+    }
+    return Results.NotFound();
+});
 
 app.Run();
 
