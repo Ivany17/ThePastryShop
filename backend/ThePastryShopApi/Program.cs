@@ -98,16 +98,16 @@ app.MapPost("/api/cart/{id}", (AppDbContext dbContext, int id) =>
         }
         else
         {
-            var newCardInTheCart = new ProductCardInTheCart
+            productCardInTheCart = new ProductCardInTheCart // so that the variable after the if/else always contains a card, not null
             {
                 ProductItem = productFromTheDatabase,
                 Quantity = 1,
                 AddedAt = DateTime.Now,
                 IsSelected = false,
             };
-            cart.Add(newCardInTheCart); // the product is now in the cart, but not in the database, so SaveChangesAsync() is not needed
+            cart.Add(productCardInTheCart); // the product is now in the cart, but not in the database, so SaveChangesAsync() is not needed
         }
-        return Results.Ok(productFromTheDatabase);
+        return Results.Ok(productCardInTheCart);
     }
     return Results.NotFound();
 });
