@@ -84,8 +84,8 @@ function renderProducts(productsArray){
 function findAddBtn(){
     addBtn = document.querySelectorAll(".addBtn");
     addBtn.forEach(b => {
-        b.addEventListener('click', () => {
-            console.log(`${b.dataset.id}`);
+        b.addEventListener('click', async () => {
+            const postResponse = await fetch(`http://localhost:5160/api/cart/${b.dataset.id}`, {method: 'POST'}); // to add the product in the cart
         });
     });
 }
