@@ -71,7 +71,7 @@ function renderProducts(productsArray){
         return `
             <div class="product-card">
                 <h3>${p.name.toLowerCase().split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')}</h3>
-                <p>${p.category.charAt(0).toUpperCase() + p.category.slice(1)}</p> 
+                <p>${p.category.toLowerCase().split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')}</p>
                 <p>${p.description}</p>
                 <p>${p.price} ₴</p>
                 <button class="addBtn" data-id="${p.id}">Add</button>
@@ -85,7 +85,8 @@ function findAddBtn(){
     addBtn = document.querySelectorAll(".addBtn");
     addBtn.forEach(b => {
         b.addEventListener('click', async () => {
-            const postResponse = await fetch(`http://localhost:5160/api/cart/${b.dataset.id}`, {method: 'POST'}); // to add the product in the cart
+            const postResponse = await fetch(`http://localhost:5160/api/cart/${b.dataset.id}`, {method: 'POST'}); // to add the product in the cart on the server
+            loadProductsInTheCart(); // a function from the cart.js file that will load new product cards, read the cart and draw the cards. This call goes after the fetch, because the card is already saved on the server
         });
     });
 }
