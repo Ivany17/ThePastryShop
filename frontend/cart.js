@@ -15,6 +15,8 @@ async function loadProductsInTheCart(){
     cartData = await getCartResponse.json(); // convert the JSON into an object so that it can be used later.
     renderProductsInTheCart(cartData);
     findCheckbox();
+    findMinusAndPlusBtn('.minusBtn', -1);
+    findMinusAndPlusBtn('.plusBtn', 1);
 }
 
 function renderProductsInTheCart(cartData){
@@ -57,3 +59,67 @@ function findCheckbox(){
         });
     });
 }
+
+function findPlusBtn(){
+    const plusBtn = document.querySelectorAll('.plusBtn');
+    plusBtn.forEach(plus => {
+        plus.addEventListener('click', async () => {
+            const cardToIncrease = cartData.find(cart => cart.productItem.id === parseInt(plus.dataset.id));
+            const plusOne = cardToIncrease.quantity + 1; // the variable holds the current quantity of the item plus one, without changing the quantity in the item card
+            const increasedQuantity = { // we store a number of quantity in an object so that the server can work with it
+                UpdateQuantity: plusOne, // UpdateQuantity from class UpdateQuantityRequest in Program.cs
+            }
+            const putResponsePlus = await fetch(`http://localhost:5160/api/cart/${plus.dataset.id}`, {
+                method: 'PUT',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify(increasedQuantity),
+            });
+            loadProductsInTheCart(); // a function that will load new product cards, read the cart and draw the cards. This call goes after the fetch, because the card is already saved on the server
+        });
+    });
+}
+
+function findMinusBtn(){
+    const minusBtn = document.querySelectorAll('.minusBtn');
+    minusBtn.forEach(minus => {
+        minus.addEventListener('click', async () => {
+            const cardToDecrease = cartData.find(cart => cart.productItem.id === parseInt(minus.dataset.id));
+            const minusOne = cardToDecrease.quantity - 1; // the variable holds the current quantity of the item minus one, without changing the quantity in the item card
+            if(minusOne < 1){ // the user should not be able to send a request to the server that would be rejected anyway
+                return;
+            }
+            const decreasedQuantity = { // we store a number of quantity in an object so that the server can work with it
+                UpdateQuantity: minusOne, // UpdateQuantity from class UpdateQuantityRequest in Program.cs
+            }
+            const putResponseMinus = await fetch(`http://localhost:5160/api/cart/${minus.dataset.id}`, {
+                method: 'PUT',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify(decreasedQuantity),
+            });
+            loadProductsInTheCart(); // a function that will load new product cards, read the cart and draw the cards. This call goes after the fetch, because the card is already saved on the server
+        });
+    });
+}
+
+function findMinusAndPlusBtn(findBtn, changeInQuantity){
+    const quantityBtns = document.querySelectorAll(findBtn);
+    quantityBtns.forEach(button => {
+        button.addEventListener('click', async () => {
+            const cardWithQuantity = cartData.find(cart => cart.productItem.id === parseInt(button.dataset.id));
+            const newQuantity = cardWithQuantity.quantity + changeInQuantity; // the variable holds the current quantity of the item plus change in quantity, without changing the quantity in the item card
+            if(newQuantity < 1){ // the user should not be able to send a request to the server that would be rejected anyway
+                return;
+            }
+            const changedQuantity = { // we store a number of quantity in an object so that the server can work with it
+                UpdateQuantity: newQuantity, // UpdateQuantity from class UpdateQuantityRequest in Program.cs
+            }
+            const putResponseBtns = await fetch(`http://localhost:5160/api/cart/${button.dataset.id}`, {
+                method: 'PUT',
+                headers: { 'Content-type': 'application/json' },
+                body: JSON.stringify(changedQuantity),
+            });
+            loadProductsInTheCart(); // a function that will load new product cards, read the cart and draw the cards. This call goes after the fetch, because the card is already saved on the server
+        });
+    });
+}
+
