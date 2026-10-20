@@ -20,13 +20,13 @@ async function loadProductsInTheCart(){
     findMinusAndPlusBtn('.plusBtn', 1);
 }
 
-function renderProductsInTheCart(cartData){
-    if(cartData.length === 0){
+function renderProductsInTheCart(listOfCards){
+    if(listOfCards.length === 0){
         cartContainer.innerHTML = `The cart is empty`;
         return;
     }
-    cartData.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt)); // Convert the text into a date and sort the product cards from newest to oldest
-    const productsHTML = cartData.map((cardInTheCart) => {
+    listOfCards.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt)); // Convert the text into a date and sort the product cards from newest to oldest
+    const productsHTML = listOfCards.map((cardInTheCart) => {
         const checkInTag = cardInTheCart.isSelected ? 'checked' : ''; // the `checked` attribute is used so that a checkbox appears with a checkmark.
         // Capitalize first letter in name and category for display only (data stays lowercase)
         return `
@@ -98,4 +98,9 @@ function findDeleteBtn(){
             loadProductsInTheCart();
         });
     });
+}
+
+function allThePricesInTheCart(cardsInTheCart){
+    const sumOfAllPrices = cardsInTheCart.reduce((acc, n) => {return acc + n.productItem.price * n.quantity}, 0);
+    return sumOfAllPrices;
 }
