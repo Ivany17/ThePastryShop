@@ -1,6 +1,8 @@
 //cart.js
 const cartBtn = document.getElementById('cartBtn');
 const cartContainer = document.getElementById('cart-container');
+const containerForTotalPrice = document.getElementById('containerForTotalPrice');
+const containerForCards = document.getElementById('containerForCards');
 let cartData; // declare the variable outside so that all functions can use it.
 
 cartBtn.addEventListener('click', () => {
@@ -13,14 +15,15 @@ cartBtn.addEventListener('click', () => {
 async function loadProductsInTheCart(){
     const getCartResponse = await fetch(`http://localhost:5160/api/cart`);
     cartData = await getCartResponse.json(); // convert the JSON into an object so that it can be used later.
-    renderProductsInTheCart(cartData);
+    const totalPrice = allThePricesInTheCart(cartData);
+    renderProductsInTheCart(cartData, totalPrice);
     findCheckbox();
     findDeleteBtn();
     findMinusAndPlusBtn('.minusBtn', -1);
     findMinusAndPlusBtn('.plusBtn', 1);
 }
 
-function renderProductsInTheCart(listOfCards){
+function renderProductsInTheCart(listOfCards, sumOfProductPrices){
     if(listOfCards.length === 0){
         cartContainer.innerHTML = `The cart is empty`;
         return;
