@@ -25,7 +25,7 @@ async function loadProductsInTheCart(){
 
 function renderProductsInTheCart(listOfCards, sumOfProductPrices){
     if(listOfCards.length === 0){
-        cartContainer.innerHTML = `The cart is empty`;
+        containerForCards.innerHTML = `The cart is empty`;
         return;
     }
     listOfCards.sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt)); // Convert the text into a date and sort the product cards from newest to oldest
@@ -46,7 +46,8 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
             </div>
         `;
     }).join("");
-    cartContainer.innerHTML = productsHTML;
+    containerForTotalPrice.textContent = `Total price in the cart: ${sumOfProductPrices} ₴`;
+    containerForCards.innerHTML = productsHTML;
 }
 
 function findCheckbox(){
