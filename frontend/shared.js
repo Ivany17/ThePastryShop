@@ -64,3 +64,9 @@ const addressHTML =
 
 const copyrightHTML =
     `<p>&copy; Charodiya, 2026</p>`
+
+function showToastMessage(textMessage){
+    const toastContainer = document.getElementById('toastContainer');
+    const toastMessage = document.createElement('p');
+    toastMessage.textContent = textMessage;
+}

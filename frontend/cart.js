@@ -4,26 +4,41 @@ const cartContainer = document.getElementById('cart-container');
 const containerForTotalPrice = document.getElementById('containerForTotalPrice');
 const containerForCards = document.getElementById('containerForCards');
 let cartData; // declare the variable outside so that all functions can use it.
+const buyBtn = document.getElementById('buyBtn');
 
 cartBtn.addEventListener('click', () => {
+    document.body.classList.toggle('openCartForBody');
     cartContainer.classList.toggle('openCart'); // add and remove a class with a single click using `toggle`.
     if(cartContainer.classList.contains('openCart')){ // if the class is added, load the product cards in the cart.
         loadProductsInTheCart();
     }
 });
 
+buyBtn.addEventListener('click', async () => {
+    const deleteAllResponse = await fetch(`http://localhost:5160/api/cart/checked`, {
+        method: 'DELETE',
+    });
+    loadProductsInTheCart();
+    alert(`Your purchase is successful`);
+});
+
 async function loadProductsInTheCart(){
     const getCartResponse = await fetch(`http://localhost:5160/api/cart`);
     cartData = await getCartResponse.json(); // convert the JSON into an object so that it can be used later.
-    const totalPrice = allThePricesInTheCart(cartData);
+    const totalPrice = thePricesInTheCart(cartData);
     renderProductsInTheCart(cartData, totalPrice);
+    const listOfSelectedCards = findTheSelectedCards(cartData);
+    const totalPriceOfSelectedCards = thePricesInTheCart(listOfSelectedCards);
     findCheckbox();
     findDeleteBtn();
     findMinusAndPlusBtn('.minusBtn', -1);
     findMinusAndPlusBtn('.plusBtn', 1);
+    buyBtn.textContent = `Buy for ${totalPriceOfSelectedCards} ₴`;
+    buyBtn.disabled = (listOfSelectedCards.length === 0); // if no cards are selected, the condition becomes true, which makes the button inactive — since the `disabled` property itself relies on `true`/`false` conditions.
 }
 
 function renderProductsInTheCart(listOfCards, sumOfProductPrices){
+    containerForTotalPrice.textContent = `Total price in the cart: ${sumOfProductPrices} ₴`;
     if(listOfCards.length === 0){
         containerForCards.innerHTML = `The cart is empty`;
         return;
@@ -46,7 +61,6 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
             </div>
         `;
     }).join("");
-    containerForTotalPrice.textContent = `Total price in the cart: ${sumOfProductPrices} ₴`;
     containerForCards.innerHTML = productsHTML;
 }
 
@@ -62,6 +76,7 @@ function findCheckbox(){
                 headers: { 'Content-type': 'application/json' },
                 body: JSON.stringify(checkedProduct),
             });
+            loadProductsInTheCart();
         });
     });
 }
@@ -104,7 +119,12 @@ function findDeleteBtn(){
     });
 }
 
-function allThePricesInTheCart(cardsInTheCart){
-    const sumOfAllPrices = cardsInTheCart.reduce((acc, n) => {return acc + n.productItem.price * n.quantity}, 0);
-    return sumOfAllPrices;
+function thePricesInTheCart(cardsInTheCart){
+    const sumOfCardPrices = cardsInTheCart.reduce((acc, n) => {return acc + n.productItem.price * n.quantity}, 0);
+    return sumOfCardPrices;
+}
+
+function findTheSelectedCards(cardsForSelect){
+    const selectedCard = cardsForSelect.filter(card => card.isSelected);
+    return selectedCard;
 }

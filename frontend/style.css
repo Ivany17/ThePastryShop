@@ -1,14 +1,20 @@
 /* style.css */
+/* the padding equals the width of the cart, when the class from the cartBtn event handler is enabled */
+body.openCartForBody{ 
+    padding-right: 33vw;
+    background-color: brown;
+}
 /* for cart block */
 #cart-container{
     position: fixed;
     right: 0;
     top: 0;
-    width: 50vw;
+    width: 33vw;
     height: 100vh;
     background-color: lightgrey;
     transform: translateX(100%);
     transition: transform 300ms;
+    overflow-y: auto;
 }
 #cart-container.openCart{
     transform: translateX(0%);
