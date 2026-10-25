@@ -19,7 +19,7 @@ buyBtn.addEventListener('click', async () => {
         method: 'DELETE',
     });
     loadProductsInTheCart();
-    alert(`Your purchase is successful`);
+    showToastMessage(`Your purchase is successful`);
 });
 
 async function loadProductsInTheCart(){

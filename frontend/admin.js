@@ -100,8 +100,8 @@ function findRemoveAndEditBtns(){
                 const removeResponse = await fetch(`http://localhost:5160/api/products/${b.dataset.id}`, {
                     method: 'DELETE'
                 });
-            loadAdminProducts();
-            alert(`${b.dataset.name} deleted successfully`);
+                loadAdminProducts();
+                showToastMessage(`${b.dataset.name} deleted successfully`);
             }
         });
     });

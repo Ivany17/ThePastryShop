@@ -2,7 +2,6 @@
 /* the padding equals the width of the cart, when the class from the cartBtn event handler is enabled */
 body.openCartForBody{ 
     padding-right: 33vw;
-    background-color: brown;
 }
 /* for cart block */
 #cart-container{
