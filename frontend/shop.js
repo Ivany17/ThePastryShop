@@ -62,8 +62,11 @@ async function loadProducts() {
 }
 
 function renderProducts(productsArray){
-    if(productsArray.length === 0){
-        productsContainer.innerHTML = `This item is not found`;
+    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier
+        productsContainer.innerHTML = `Sorry, our products are coming soon. Please check back later.`;
+        return;
+    } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category
+        productsContainer.innerHTML = `Unfortunately, this product was not found. Try searching for another product.`;
         return;
     }
     const productsHTML = productsArray.map((p) => {

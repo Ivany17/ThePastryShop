@@ -69,7 +69,10 @@ async function loadAdminProducts(){
 };
 
 function renderAdminProducts(productsArray){
-    if(productsArray.length === 0){
+    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier
+        productsContainer.innerHTML = `There are no products yet`;
+        return;
+    } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category
         productsContainer.innerHTML = `This item is not found`;
         return;
     }
