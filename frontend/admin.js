@@ -138,6 +138,11 @@ addProductBtn.addEventListener('click', async () => {
         body: JSON.stringify(newProduct),
     });
     loadAdminProducts();
+    inputNameOfTheProduct.value = ""; // clearing the field after sending data to the server
+    descriptionOfTheProduct.value = "";
+    inputPriceOfTheProduct.value = "";
+    inputPhotoOfTheProduct.value = ""; // clearing the plain text, not the array that is created within the object.
+    productCategories.selectedIndex = 1;
 });
 
 modalOverlay.style.display = 'none'; // hide the modal window
