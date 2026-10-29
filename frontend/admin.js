@@ -142,7 +142,8 @@ addProductBtn.addEventListener('click', async () => {
     descriptionOfTheProduct.value = "";
     inputPriceOfTheProduct.value = "";
     inputPhotoOfTheProduct.value = ""; // clearing the plain text, not the array that is created within the object.
-    productCategories.selectedIndex = 1;
+    productCategories.selectedIndex = 0; // reset the drop-down list—where the first option equals 0—so that the category is set back to the default for the next product.
+    showToastMessage(`${newProduct.Name} added successfully to the ${newProduct.Category} category`);
 });
 
 modalOverlay.style.display = 'none'; // hide the modal window
