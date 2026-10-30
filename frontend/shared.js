@@ -70,5 +70,5 @@ function showToastMessage(textMessage){
     const toastMessage = document.createElement('p'); // create a new html element and saving it into the memory
     toastMessage.textContent = textMessage;
     toastContainer.append(toastMessage); // add new element to the block and show it
-    setTimeout(() => toastMessage.remove(), 3000); // an arrow function is needed to delete an element in 3 seconds, rather than immediately
+    setTimeout(() => toastMessage.remove(), 60000); // an arrow function is needed to delete an element in 3 seconds, rather than immediately
 }

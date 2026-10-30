@@ -143,7 +143,9 @@ addProductBtn.addEventListener('click', async () => {
     inputPriceOfTheProduct.value = "";
     inputPhotoOfTheProduct.value = ""; // clearing the plain text, not the array that is created within the object.
     productCategories.selectedIndex = 0; // reset the drop-down list—where the first option equals 0—so that the category is set back to the default for the next product.
-    showToastMessage(`${newProduct.Name} added successfully to the ${newProduct.Category} category`);
+    if(postResponse.ok){ // display a toast message only if the response from the server is successful.
+        showToastMessage(`${newProduct.Name} added successfully to the ${newProduct.Category.charAt(0).toUpperCase() + newProduct.Category.slice(1)} category`); // at this moment, the form fields have already been cleared, and the object still holds the values.
+    }
 });
 
 modalOverlay.style.display = 'none'; // hide the modal window
