@@ -72,3 +72,15 @@ function showToastMessage(textMessage){
     toastContainer.append(toastMessage); // add new element to the block and show it
     setTimeout(() => toastMessage.remove(), 60000); // an arrow function is needed to delete an element in 3 seconds, rather than immediately
 }
+
+function capitalizeEachWord(phrase){ // make the first letter uppercase, and all other letters in the word lowercase
+    return phrase
+        .toLowerCase()
+        .trim() // trim() that removes extra spaces before and after a text should be used before the phrase is split; otherwise, these extra spaces will cause the code to fail.
+        .split(/\s+/) // a regular expression (regex) pattern that treats one or more spaces within a phrase as a single separator; otherwise, these extra spaces inside a phrase will cause the code to fail.
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' '); // If the string is empty, `word.charAt(0)` returns an empty string, on which `toUpperCase()` can be used, unlike word[0], which would break the code
+}
+
+function removeExtraSpaces(phrase){
+    return phrase.trim().replace(/\s+/g, " "); // Remove extra spaces in the middle using .replace and at the beginning and at the end of a phrase using trim(), to prevent data containing extra spaces from reaching the server.
+}
