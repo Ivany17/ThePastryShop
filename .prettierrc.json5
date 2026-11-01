@@ -1,0 +1,10 @@
+//.prettierrc.json5
+// Prettier settings for the whole project: how the code is formatted by Shift+Alt+F or on save.
+// tabWidth: indent size, singleQuote: use 'text' instead of "text", printWidth: max line length.
+{
+    tabWidth: 4,
+    singleQuote: true,
+    printWidth: 200,
+    trailingComma: 'es5',
+    arrowParens: 'avoid',
+}

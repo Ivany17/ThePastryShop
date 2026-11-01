@@ -51,7 +51,7 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
             <div class="product-card-in-the-cart">
                 <input type="checkbox" class="checkedProductInTheCart" data-id="${cardInTheCart.productItem.id}" ${checkInTag}>
                 <button class="deleteBtn" data-id="${cardInTheCart.productItem.id}" data-name="${cardInTheCart.productItem.name}">Delete</button>
-                <h3>${cardInTheCart.productItem.name.toLowerCase().split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')}</h3>
+                <h3>${capitalizeEachWord(cardInTheCart.productItem.name)}</h3>
                 <p>${cardInTheCart.productItem.category.toLowerCase().split(' ').map(word => word[0].toUpperCase() + word.slice(1)).join(' ')}</p> 
                 <p>${cardInTheCart.productItem.description}</p>
                 <button class="minusBtn" data-id="${cardInTheCart.productItem.id}">-</button>
