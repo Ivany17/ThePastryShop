@@ -25,6 +25,9 @@ let currentProductsByCategory; // stores the current list of products in certain
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
+    if(!currentProductsByCategory){
+        return;
+    }
     const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase())));
     renderAdminProducts(filteredByName);
     findRemoveAndEditBtns();
@@ -38,12 +41,18 @@ function showCurrentListOfProducts(currentListOfProducts) {
 }
 
 function showFilteredProductsByCategory(category) {
+    if(!data){
+        return;
+    }
     const currentList = data.filter(p => p.category.toLowerCase() === category);
     showCurrentListOfProducts(currentList);
 }
 
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
+    if(!data){
+        return;
+    }
     showCurrentListOfProducts(data);
 });
 

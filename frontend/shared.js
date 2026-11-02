@@ -86,3 +86,24 @@ function removeExtraSpaces(phrase) {
 function hasTheFormEmptyFields(filledForm) {
     return filledForm.Name.length === 0 || filledForm.Description.length === 0 || Number.isNaN(filledForm.Price) || filledForm.Price <= 0;
 }
+
+
+function replaceLeftAngleBracket(text){
+    return text.replaceAll('<', '&lt;');
+}
+
+function replaceRightAngleBracket(text){
+    return text.replaceAll('>', '&gt;');
+}
+
+function replaceAmpersand(text){
+    return text.replaceAll('&', '&amp;');
+}
+
+function replaceDoubleQuote(text){
+    return text.replaceAll('"', '&quot;');
+}
+
+function replaceSingleQuote(text){
+    return text.replaceAll(`'`, '&#39;');
+}

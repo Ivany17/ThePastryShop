@@ -10,6 +10,9 @@ const categoryParam = params.get('category'); // get the value from the category
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
+    if(!currentProductsByCategory){ // If the list of products fails to load for any reason, the `return` prevents .filter from being called on undefined.
+        return;
+    }
     const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase()))); // search only in certain category
     renderProducts(filteredByName);
     findAddBtn();
@@ -23,12 +26,18 @@ function showCurrentListOfProducts(currentListOfProducts) {
 }
 
 function showFilteredProductsByCategory(category) {
+    if(!data){
+        return;
+    }
     const currentList = data.filter(p => p.category.toLowerCase() === category);
     showCurrentListOfProducts(currentList);
 }
 
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
+    if(!data){
+        return;
+    }
     showCurrentListOfProducts(data);
 });
 
