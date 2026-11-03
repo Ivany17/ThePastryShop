@@ -25,7 +25,7 @@ let currentProductsByCategory; // stores the current list of products in certain
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
-    if(!currentProductsByCategory){
+    if(!currentProductsByCategory){  // If the list of products fails to load for any reason, the `return` prevents .filter from being called on undefined.
         return;
     }
     const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase())));
@@ -94,9 +94,9 @@ function renderAdminProducts(productsArray) {
         .map(p => { // Capitalize first letter in name and category for display only (data stays lowercase)
             return `
             <div class="product-card">
-                <h3>${capitalizeEachWord(p.name)}</h3>
-                <p>${capitalizeEachWord(p.category)}</p> 
-                <p>${p.description}</p>
+                <h3>${safeHTMLcodes(capitalizeEachWord(p.name))}</h3>
+                <p>${safeHTMLcodes(capitalizeEachWord(p.category))}</p>
+                <p>${safeHTMLcodes(p.description)}</p>
                 <p>${p.price} ₴</p>
                 <button class="removeBtn" data-id="${p.id}">Remove</button>
                 <button class="editBtn" data-id="${p.id}">Edit</button>

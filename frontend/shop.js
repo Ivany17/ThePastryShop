@@ -86,9 +86,9 @@ function renderProducts(productsArray) {
         .map(p => { // Capitalize first letter in name and category for display only (data stays lowercase)
             return `
             <div class="product-card">
-                <h3>${capitalizeEachWord(p.name)}</h3>
-                <p>${capitalizeEachWord(p.category)}</p>
-                <p>${p.description}</p>
+                <h3>${safeHTMLcodes(capitalizeEachWord(p.name))}</h3>
+                <p>${safeHTMLcodes(capitalizeEachWord(p.category))}</p>
+                <p>${safeHTMLcodes(p.description)}</p>
                 <p>${p.price} ₴</p>
                 <button class="addBtn" data-id="${p.id}">Add</button>
             </div>

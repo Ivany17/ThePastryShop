@@ -87,6 +87,11 @@ function hasTheFormEmptyFields(filledForm) {
     return filledForm.Name.length === 0 || filledForm.Description.length === 0 || Number.isNaN(filledForm.Price) || filledForm.Price <= 0;
 }
 
+// This block replaces dangerous characters with safe ones before they reach `innerHTML`, ensuring the text is displayed as plain text.
+// The replacement for the ampersand (&) must come first, because the safe codes for other characters also contain an ampersand.
+function replaceAmpersand(text){
+    return text.replaceAll('&', '&amp;');
+}
 
 function replaceLeftAngleBracket(text){
     return text.replaceAll('<', '&lt;');
@@ -96,14 +101,20 @@ function replaceRightAngleBracket(text){
     return text.replaceAll('>', '&gt;');
 }
 
-function replaceAmpersand(text){
-    return text.replaceAll('&', '&amp;');
-}
-
 function replaceDoubleQuote(text){
     return text.replaceAll('"', '&quot;');
 }
 
 function replaceSingleQuote(text){
     return text.replaceAll(`'`, '&#39;');
+}
+
+// A function that combines the five escape functions into a chain and invokes them in the correct order to escape text before inserting it into innerHTML.
+function safeHTMLcodes(text){
+    const ampersand = replaceAmpersand(text);
+    const leftAngleBracket = replaceLeftAngleBracket(ampersand);
+    const rightAngleBracket = replaceRightAngleBracket(leftAngleBracket);
+    const doubleQuote = replaceDoubleQuote(rightAngleBracket);
+    const singleQuote = replaceSingleQuote(doubleQuote);
+    return singleQuote;
 }
