@@ -22,6 +22,7 @@ const cancelBtn = document.getElementById('cancelBtn');
 let currentEditId;
 let data;
 let currentProductsByCategory; // stores the current list of products in certain category
+let currentCategory = null;
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
@@ -45,6 +46,7 @@ function showFilteredProductsByCategory(category) {
         return;
     }
     const currentList = data.filter(p => p.category.toLowerCase() === category);
+    currentCategory = category;
     showCurrentListOfProducts(currentList);
 }
 
@@ -53,6 +55,7 @@ headerAllBtn.addEventListener('click', () => {
     if(!data){
         return;
     }
+    currentCategory = null;
     showCurrentListOfProducts(data);
 });
 
@@ -75,7 +78,11 @@ async function loadAdminProducts() {
     try {
         const getResponse = await fetch('http://localhost:5160/api/products');
         data = await getResponse.json();
-        showCurrentListOfProducts(data);
+        if(currentCategory){
+            showFilteredProductsByCategory(currentCategory);
+        } else {
+            showCurrentListOfProducts(data);
+        }
     } catch (error) {
         productsContainer.innerHTML = `Failed to load products. Check if the server is running.`;
     }
@@ -91,7 +98,7 @@ function renderAdminProducts(productsArray) {
     }
     const productsHTML = productsArray
         .sort((a, b) => b.id - a.id) // Sort products from newest to oldest
-        .map(p => { // Capitalize first letter in name and category for display only (data stays lowercase)
+        .map(p => { // Capitalize first letter in every word in name and category for display only (data doesn't change)
             return `
             <div class="product-card">
                 <h3>${safeHTMLcodes(capitalizeEachWord(p.name))}</h3>
