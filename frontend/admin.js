@@ -22,7 +22,7 @@ const cancelBtn = document.getElementById('cancelBtn');
 let currentEditId;
 let data;
 let currentProductsByCategory; // stores the current list of products in certain category
-let currentCategory = null;
+let currentCategory = null; // Stores the selected category. After adding, editing, or deleting a product, the user remains in the current category. `null` indicates that no specific category has been selected.
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
@@ -34,11 +34,15 @@ searchProducts.addEventListener('input', () => {
     findRemoveAndEditBtns();
 });
 
+function filterAndShowByName(){
+    const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase())));
+    renderAdminProducts(filteredByName);
+}
+
 function showCurrentListOfProducts(currentListOfProducts) {
     currentProductsByCategory = currentListOfProducts;
     renderAdminProducts(currentProductsByCategory);
     findRemoveAndEditBtns();
-    searchProducts.value = '';
 }
 
 function showFilteredProductsByCategory(category) {
@@ -56,21 +60,25 @@ headerAllBtn.addEventListener('click', () => {
         return;
     }
     currentCategory = null;
+    searchProducts.value = '';
     showCurrentListOfProducts(data);
 });
 
 const headerCakesBtn = document.getElementById('headerCakesBtn');
 headerCakesBtn.addEventListener('click', () => {
+    searchProducts.value = '';
     showFilteredProductsByCategory('cake');
 });
 
 const headerPastriesBtn = document.getElementById('headerPastriesBtn');
 headerPastriesBtn.addEventListener('click', () => {
+    searchProducts.value = '';
     showFilteredProductsByCategory('pastry');
 });
 
 const headerCookiesBtn = document.getElementById('headerCookiesBtn');
 headerCookiesBtn.addEventListener('click', () => {
+    searchProducts.value = '';
     showFilteredProductsByCategory('cookie');
 });
 
