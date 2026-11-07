@@ -9,8 +9,6 @@ const inputPriceOfTheProduct = document.getElementById('inputPriceOfTheProduct')
 const productCategories = document.getElementById('product-categories');
 const inputPhotoOfTheProduct = document.getElementById('inputPhotoOfTheProduct');
 const addProductBtn = document.getElementById('addProductBtn');
-let removeBtn;
-let editBtn;
 const modalOverlay = document.querySelector('.modal-overlay');
 const editNameOfTheProduct = document.getElementById('editNameOfTheProduct');
 const editDescriptionOfTheProduct = document.getElementById('editDescriptionOfTheProduct');
@@ -24,28 +22,28 @@ let data;
 let currentProductsByCategory; // stores the current list of products in certain category
 let currentCategory = null; // Stores the selected category. After adding, editing, or deleting a product, the user remains in the current category. `null` indicates that no specific category has been selected.
 
-const searchProducts = document.getElementById('searchProducts');
-searchProducts.addEventListener('input', () => {
+// It is called from the search handler and the `loadAdminProducts` function, and it filters the list based on the search field value so that the screen matches the field after the data is updated.
+function filterAndShowByName(){
     if(!currentProductsByCategory){  // If the list of products fails to load for any reason, the `return` prevents .filter from being called on undefined.
         return;
     }
     const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase())));
     renderAdminProducts(filteredByName);
     findRemoveAndEditBtns();
-});
-
-function filterAndShowByName(){
-    const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase())));
-    renderAdminProducts(filteredByName);
 }
 
-function showCurrentListOfProducts(currentListOfProducts) {
+const searchProducts = document.getElementById('searchProducts');
+searchProducts.addEventListener('input', () => {
+    filterAndShowByName();
+});
+
+function showCurrentListOfProducts(currentListOfProducts){
     currentProductsByCategory = currentListOfProducts;
     renderAdminProducts(currentProductsByCategory);
     findRemoveAndEditBtns();
 }
 
-function showFilteredProductsByCategory(category) {
+function showFilteredProductsByCategory(category){
     if(!data){
         return;
     }
@@ -82,25 +80,31 @@ headerCookiesBtn.addEventListener('click', () => {
     showFilteredProductsByCategory('cookie');
 });
 
-async function loadAdminProducts() {
+async function loadAdminProducts(){
     try {
         const getResponse = await fetch('http://localhost:5160/api/products');
+        if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list
+            productsContainer.innerHTML = `Failed to load products. The server returned an error.`;
+            return;
+        }
         data = await getResponse.json();
         if(currentCategory){
             showFilteredProductsByCategory(currentCategory);
         } else {
             showCurrentListOfProducts(data);
         }
-    } catch (error) {
+        filterAndShowByName();
+    } catch (error){
         productsContainer.innerHTML = `Failed to load products. Check if the server is running.`;
+        console.error(error); // Outputs the actual cause of the error to the console for the developer.
     }
 }
 
-function renderAdminProducts(productsArray) {
-    if (data.length === 0) { // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier
+function renderAdminProducts(productsArray){
+    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier
         productsContainer.innerHTML = `There are no products yet`;
         return;
-    } else if (productsArray.length === 0) { // if the product is not found in the search or in a specific category
+    } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category
         productsContainer.innerHTML = `This item is not found`;
         return;
     }
@@ -120,12 +124,12 @@ function renderAdminProducts(productsArray) {
     productsContainer.innerHTML = productsHTML;
 }
 
-function findRemoveAndEditBtns() {
-    removeBtn = document.querySelectorAll('.removeBtn');
+function findRemoveAndEditBtns(){
+    const removeBtn = document.querySelectorAll('.removeBtn');
     removeBtn.forEach(b => {
         b.addEventListener('click', async () => {
-            const removedProduct = data.find(d => d.id === parseInt(b.dataset.id));
-            if (!confirm(`Do you really want to delete ${capitalizeEachWord(removedProduct.name)}?`)) {
+            const removedProduct = data.find(d => d.id === parseInt(b.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
+            if(!confirm(`Do you really want to delete ${capitalizeEachWord(removedProduct.name)}?`)){
                 return;
             } else {
                 try {
@@ -138,16 +142,17 @@ function findRemoveAndEditBtns() {
                     } else {
                         showToastMessage(`${capitalizeEachWord(removedProduct.name)} was not deleted`);
                     }
-                } catch (error) {
+                } catch (error){
                     showToastMessage(`${capitalizeEachWord(removedProduct.name)} was not deleted. Check if the server is running.`);
+                    console.error(error);
                 }
             }
         });
     });
-    editBtn = document.querySelectorAll('.editBtn');
+    const editBtn = document.querySelectorAll('.editBtn');
     editBtn.forEach(b => {
         b.addEventListener('click', () => { // Find the product with its id, not with saving it in HTML to avoid errors from/with special characters
-            const editProduct = data.find(d => d.id === parseInt(b.dataset.id));
+            const editProduct = data.find(d => d.id === parseInt(b.dataset.id, 10));
             editNameOfTheProduct.value = editProduct.name;
             editDescriptionOfTheProduct.value = editProduct.description;
             editPriceOfTheProduct.value = editProduct.price;
@@ -167,18 +172,19 @@ addProductBtn.addEventListener('click', async () => {
         Price: parseFloat(inputPriceOfTheProduct.value),
         PhotoLinks: [inputPhotoOfTheProduct.value],
     };
-    if (hasTheFormEmptyFields(newProduct)) {
+    if(hasTheFormEmptyFields(newProduct)){
         showToastMessage('All fields must be filled in. And the price must be greater than 0');
         return;
     }
+    addProductBtn.disabled = true;
     try {
         const postResponse = await fetch('http://localhost:5160/api/products', {
             method: 'POST',
-            headers: { 'Content-type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newProduct),
         });
         loadAdminProducts();
-        if (postResponse.ok) { // clear form fields and display a toast message only if the response from the server is successful. Therefore, in the event of an error, the form remains filled out, and the administrator can correct the data.
+        if(postResponse.ok){ // clear form fields and display a toast message only if the response from the server is successful. Therefore, in the event of an error, the form remains filled out, and the administrator can correct the data.
             inputNameOfTheProduct.value = ''; // clearing the field after sending data to the server
             descriptionOfTheProduct.value = '';
             inputPriceOfTheProduct.value = '';
@@ -188,8 +194,11 @@ addProductBtn.addEventListener('click', async () => {
         } else {
             showToastMessage(`${capitalizeEachWord(newProduct.Name)} was not added`);
         }
-    } catch (error) {
+    } catch (error){
         showToastMessage(`${capitalizeEachWord(newProduct.Name)} was not added. Check if the server is running.`);
+        console.error(error);
+    } finally {
+        addProductBtn.disabled = false;
     }
 });
 
@@ -203,14 +212,15 @@ saveChangesBtn.addEventListener('click', async () => {
         Price: parseFloat(editPriceOfTheProduct.value),
         PhotoLinks: [editPhotoOfTheProduct.value],
     };
-    if (hasTheFormEmptyFields(changedProduct)) {
+    if(hasTheFormEmptyFields(changedProduct)){
         showToastMessage('All fields must be filled in. And the price must be greater than 0');
         return;
     }
+    saveChangesBtn.disabled = true;
     try {
         const putResponse = await fetch(`http://localhost:5160/api/products/${currentEditId}`, {
             method: 'PUT',
-            headers: { 'Content-type': 'application/json' },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(changedProduct),
         });
         loadAdminProducts();
@@ -220,8 +230,11 @@ saveChangesBtn.addEventListener('click', async () => {
         } else {
             showToastMessage(`${capitalizeEachWord(changedProduct.Name)} was not changed`);
         }
-    } catch (error) {
+    } catch (error){
         showToastMessage(`${capitalizeEachWord(changedProduct.Name)} was not changed. Check if the server is running.`);
+        console.error(error);
+    } finally {
+        saveChangesBtn.disabled = false;
     }
 });
 

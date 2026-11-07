@@ -18,14 +18,14 @@ searchProducts.addEventListener('input', () => {
     findAddBtn();
 });
 
-function showCurrentListOfProducts(currentListOfProducts) {
+function showCurrentListOfProducts(currentListOfProducts){
     currentProductsByCategory = currentListOfProducts;
     renderProducts(currentProductsByCategory.sort((a, b) => b.id - a.id)); // Sort products from newest to oldest
     findAddBtn();
     searchProducts.value = '';
 }
 
-function showFilteredProductsByCategory(category) {
+function showFilteredProductsByCategory(category){
     if(!data){
         return;
     }
@@ -57,28 +57,33 @@ headerCookiesBtn.addEventListener('click', () => {
 });
 
 const productsContainer = document.getElementById('products-container');
-let addBtn;
 
-async function loadProducts() {
+const errorLoadingMessage = `We couldn't load the products. Please try again later.`;
+async function loadProducts(){
     try {
         const getResponse = await fetch('http://localhost:5160/api/products');
+        if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list
+            productsContainer.innerHTML = errorLoadingMessage;
+            return;
+        }
         data = await getResponse.json();
-        const filterByCategories = data.filter(p => p.category.toLowerCase() === categoryParam);
-        if (categoryParam === null) { // null means the absence of a category
+        if(!categoryParam){ // If the category parameter is missing from the address or is empty, then all products are displayed.
             showCurrentListOfProducts(data);
         } else {
+            const filterByCategories = data.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
             showCurrentListOfProducts(filterByCategories);
         }
-    } catch (error) {
-        productsContainer.innerHTML = `We couldn't load the products. Please try again later.`;
+    } catch (error){
+        productsContainer.innerHTML = errorLoadingMessage;
+        console.error(error); // Outputs the actual cause of the error to the console for the developer.
     }
 }
 
-function renderProducts(productsArray) {
-    if (data.length === 0) { // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier
+function renderProducts(productsArray){
+    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier
         productsContainer.innerHTML = `Sorry, our products are coming soon. Please check back later.`;
         return;
-    } else if (productsArray.length === 0) { // if the product is not found in the search or in a specific category
+    } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category
         productsContainer.innerHTML = `Unfortunately, this product was not found. Try searching for another product.`;
         return;
     }
@@ -97,11 +102,11 @@ function renderProducts(productsArray) {
     productsContainer.innerHTML = productsHTML;
 }
 
-function findAddBtn() {
-    addBtn = document.querySelectorAll('.addBtn');
+function findAddBtn(){
+    const addBtn = document.querySelectorAll('.addBtn');
     addBtn.forEach(b => {
         b.addEventListener('click', async () => {
-            const addedProduct = data.find(d => d.id === parseInt(b.dataset.id));
+            const addedProduct = data.find(d => d.id === parseInt(b.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
             try {
                 const postResponse = await fetch(`http://localhost:5160/api/cart/${b.dataset.id}`, { method: 'POST' }); // to add the product in the cart on the server
                 loadProductsInTheCart(); // a function from the cart.js file that will load new product cards, read the cart and draw the cards. This call goes after the fetch, because the card is already saved on the server
@@ -110,8 +115,9 @@ function findAddBtn() {
                 } else {
                     showToastMessage(`${capitalizeEachWord(addedProduct.name)} was not added to the cart`);
                 }
-            } catch (error) {
+            } catch (error){
                 showToastMessage(`Something went wrong. Please try again`);
+                console.error(error);
             }
         });
     });
