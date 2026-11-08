@@ -116,7 +116,7 @@ function renderAdminProducts(productsArray){
                 <h3>${safeHTMLcodes(capitalizeEachWord(p.name))}</h3>
                 <p>${safeHTMLcodes(capitalizeEachWord(p.category))}</p>
                 <p>${safeHTMLcodes(p.description)}</p>
-                <p>${p.price} ₴</p>
+                <p>${showPriceWithTwoDecimalPlaces(p.price)} ₴</p>
                 <button class="removeBtn" data-id="${p.id}">Remove</button>
                 <button class="editBtn" data-id="${p.id}">Edit</button>
             </div>`;})

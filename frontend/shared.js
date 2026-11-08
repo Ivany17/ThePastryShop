@@ -34,6 +34,8 @@ const navHTML = `<nav>
         <button id="headerCookiesBtn">Cookies</button>
     </nav>`;
 
+const somethingWentWrongPhrase = 'Something went wrong. Please try again';
+
 function renderFooter(page) {
     const footer = document.getElementById('footer-container');
     // these three lines are the same for three files
@@ -85,6 +87,11 @@ function removeExtraSpaces(phrase) {
 
 function hasTheFormEmptyFields(filledForm) {
     return filledForm.Name.length === 0 || filledForm.Description.length === 0 || Number.isNaN(filledForm.Price) || filledForm.Price <= 0;
+}
+
+// Returns a price as text for display only, so that every price in the project looks the same and the format can be changed in one place
+function showPriceWithTwoDecimalPlaces(price){
+    return price.toFixed(2); // rounds the number to remove floating-point "tails" like 299.96999999999997, and returns text with exactly two digits after the decimal point
 }
 
 // This block replaces dangerous characters with safe ones before they reach `innerHTML`, ensuring the text is displayed as plain text.

@@ -94,7 +94,7 @@ function renderProducts(productsArray){
                 <h3>${safeHTMLcodes(capitalizeEachWord(p.name))}</h3>
                 <p>${safeHTMLcodes(capitalizeEachWord(p.category))}</p>
                 <p>${safeHTMLcodes(p.description)}</p>
-                <p>${p.price} ₴</p>
+                <p>${showPriceWithTwoDecimalPlaces(p.price)} ₴</p>
                 <button class="addBtn" data-id="${p.id}">Add</button>
             </div>
         `;})
@@ -109,14 +109,14 @@ function findAddBtn(){
             const addedProduct = data.find(d => d.id === parseInt(b.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
             try {
                 const postResponse = await fetch(`http://localhost:5160/api/cart/${b.dataset.id}`, { method: 'POST' }); // to add the product in the cart on the server
-                loadProductsInTheCart(); // a function from the cart.js file that will load new product cards, read the cart and draw the cards. This call goes after the fetch, because the card is already saved on the server
+                loadProductsInTheCart(); // a function from cart.js that runs after any reply from the server, successful or not, so that the cart on the screen always matches the server data
                 if(postResponse.ok){
                     showToastMessage(`${capitalizeEachWord(addedProduct.name)} was added to the cart`);
                 } else {
                     showToastMessage(`${capitalizeEachWord(addedProduct.name)} was not added to the cart`);
                 }
             } catch (error){
-                showToastMessage(`Something went wrong. Please try again`);
+                showToastMessage(somethingWentWrongPhrase);
                 console.error(error);
             }
         });
