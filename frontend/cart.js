@@ -66,7 +66,7 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
         containerForCards.innerHTML = 'The cart is empty';
         return;
     }
-    const sortedCopyOfCards = [...listOfCards].sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt)); // Convert the text into a date and sort the product cards from newest to oldest
+    const sortedCopyOfCards = [...listOfCards].sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt)); // sorts a copy, not the original list, so that drawing the cart does not change the order of cartData; the text is converted into a date to sort from newest to oldest
     const productsHTML = sortedCopyOfCards.map((cardInTheCart) => {
         const checkInTag = cardInTheCart.isSelected ? 'checked' : ''; // the `checked` attribute is used so that a checkbox appears with a checkmark.
         // Capitalize first letter in every word in name and category for display only (data doesn't change)

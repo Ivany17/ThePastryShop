@@ -108,10 +108,9 @@ function renderAdminProducts(productsArray){
         productsContainer.innerHTML = `This item is not found`;
         return;
     }
-    const productsHTML = productsArray
-        .sort((a, b) => b.id - a.id) // Sort products from newest to oldest
-        .map(p => { // Capitalize first letter in every word in name and category for display only (data doesn't change)
-            return `
+       const sortedCopyOfProducts = [...productsArray].sort((a, b) => b.id - a.id); // sorts a copy, not the original list, which search and categories also use; a larger id means a newer product, so this puts the newest first
+    const productsHTML = sortedCopyOfProducts.map(p => { // Capitalize first letter in every word in name and category for display only (data doesn't change)
+        return `
             <div class="product-card">
                 <h3>${safeHTMLcodes(capitalizeEachWord(p.name))}</h3>
                 <p>${safeHTMLcodes(capitalizeEachWord(p.category))}</p>
@@ -119,8 +118,8 @@ function renderAdminProducts(productsArray){
                 <p>${showPriceWithTwoDecimalPlaces(p.price)} ₴</p>
                 <button class="removeBtn" data-id="${p.id}">Remove</button>
                 <button class="editBtn" data-id="${p.id}">Edit</button>
-            </div>`;})
-        .join('');
+            </div>
+        `;}).join('');
     productsContainer.innerHTML = productsHTML;
 }
 
