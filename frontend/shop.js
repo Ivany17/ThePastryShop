@@ -1,26 +1,26 @@
 //shop.js
 let data;
-let currentProductsByCategory; // stores the current list of products in certain category
+let currentProductsByCategory; // stores the current list of products in certain category.
 renderHeader('shop');
 renderFooter('shop');
 
-const queryString = window.location.search; // get queryString - the part of address with "?" and further
-const params = new URLSearchParams(queryString); // make the object from the string
-const categoryParam = params.get('category'); // get the value from the category to filter by category
+const queryString = window.location.search; // get queryString - the part of address with "?" and further.
+const params = new URLSearchParams(queryString); // make the object from the string.
+const categoryParam = params.get('category'); // get the value from the category to filter by category.
 
 const searchProducts = document.getElementById('searchProducts');
 searchProducts.addEventListener('input', () => {
     if(!currentProductsByCategory){ // If the list of products fails to load for any reason, the `return` prevents .filter from being called on undefined.
         return;
     }
-    const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase()))); // search only in certain category
+    const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase()))); // search only in certain category.
     renderProducts(filteredByName);
     findAddBtn();
 });
 
 function showCurrentListOfProducts(currentListOfProducts){
-    currentProductsByCategory = currentListOfProducts;
-    renderProducts(currentProductsByCategory.sort((a, b) => b.id - a.id)); // Sort products from newest to oldest
+    currentProductsByCategory = [...currentListOfProducts].sort((a, b) => b.id - a.id); // sorts a copy so the original list stays unchanged; the sorted list is stored here so that search filters it and keeps the newest-first order (a larger id means a newer product).
+    renderProducts(currentProductsByCategory);
     findAddBtn();
     searchProducts.value = '';
 }
@@ -62,7 +62,7 @@ const errorLoadingMessage = `We couldn't load the products. Please try again lat
 async function loadProducts(){
     try {
         const getResponse = await fetch('http://localhost:5160/api/products');
-        if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list
+        if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.
             productsContainer.innerHTML = errorLoadingMessage;
             return;
         }
@@ -80,15 +80,15 @@ async function loadProducts(){
 }
 
 function renderProducts(productsArray){
-    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier
+    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
         productsContainer.innerHTML = `Sorry, our products are coming soon. Please check back later.`;
         return;
-    } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category
+    } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category.
         productsContainer.innerHTML = `Unfortunately, this product was not found. Try searching for another product.`;
         return;
     }
     const productsHTML = productsArray
-        .map(p => { // Capitalize first letter in every word in name and category for display only (data doesn't change)
+        .map(p => { // Capitalize first letter in every word in name and category for display only (data doesn't change).
             return `
             <div class="product-card">
                 <h3>${safeHTMLcodes(capitalizeEachWord(p.name))}</h3>
@@ -108,8 +108,8 @@ function findAddBtn(){
         b.addEventListener('click', async () => {
             const addedProduct = data.find(d => d.id === parseInt(b.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
             try {
-                const postResponse = await fetch(`http://localhost:5160/api/cart/${b.dataset.id}`, { method: 'POST' }); // to add the product in the cart on the server
-                loadProductsInTheCart(); // a function from cart.js that runs after any reply from the server, successful or not, so that the cart on the screen always matches the server data
+                const postResponse = await fetch(`http://localhost:5160/api/cart/${b.dataset.id}`, { method: 'POST' }); // to add the product in the cart on the server.
+                loadProductsInTheCart(); // a function from cart.js that runs after any reply from the server, successful or not, so that the cart on the screen always matches the server data.
                 if(postResponse.ok){
                     showToastMessage(`${capitalizeEachWord(addedProduct.name)} was added to the cart`);
                 } else {

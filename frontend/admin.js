@@ -19,7 +19,7 @@ const saveChangesBtn = document.getElementById('saveChangesBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 let currentEditId;
 let data;
-let currentProductsByCategory; // stores the current list of products in certain category
+let currentProductsByCategory; // stores the current list of products in certain category.
 let currentCategory = null; // Stores the selected category. After adding, editing, or deleting a product, the user remains in the current category. `null` indicates that no specific category has been selected.
 
 // It is called from the search handler and the `loadAdminProducts` function, and it filters the list based on the search field value so that the screen matches the field after the data is updated.
@@ -83,7 +83,7 @@ headerCookiesBtn.addEventListener('click', () => {
 async function loadAdminProducts(){
     try {
         const getResponse = await fetch('http://localhost:5160/api/products');
-        if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list
+        if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.
             productsContainer.innerHTML = `Failed to load products. The server returned an error.`;
             return;
         }
@@ -101,15 +101,15 @@ async function loadAdminProducts(){
 }
 
 function renderAdminProducts(productsArray){
-    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier
+    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
         productsContainer.innerHTML = `There are no products yet`;
         return;
-    } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category
+    } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category.
         productsContainer.innerHTML = `This item is not found`;
         return;
     }
-       const sortedCopyOfProducts = [...productsArray].sort((a, b) => b.id - a.id); // sorts a copy, not the original list, which search and categories also use; a larger id means a newer product, so this puts the newest first
-    const productsHTML = sortedCopyOfProducts.map(p => { // Capitalize first letter in every word in name and category for display only (data doesn't change)
+       const sortedCopyOfProducts = [...productsArray].sort((a, b) => b.id - a.id); // sorts a copy, not the original list, which search and categories also use; a larger id means a newer product, so this puts the newest first.
+    const productsHTML = sortedCopyOfProducts.map(p => { // Capitalize first letter in every word in name and category for display only (data doesn't change).
         return `
             <div class="product-card">
                 <h3>${safeHTMLcodes(capitalizeEachWord(p.name))}</h3>
@@ -150,12 +150,12 @@ function findRemoveAndEditBtns(){
     });
     const editBtn = document.querySelectorAll('.editBtn');
     editBtn.forEach(b => {
-        b.addEventListener('click', () => { // Find the product with its id, not with saving it in HTML to avoid errors from/with special characters
+        b.addEventListener('click', () => { // Find the product with its id, not with saving it in HTML to avoid errors from/with special characters.
             const editProduct = data.find(d => d.id === parseInt(b.dataset.id, 10));
             editNameOfTheProduct.value = editProduct.name;
             editDescriptionOfTheProduct.value = editProduct.description;
             editPriceOfTheProduct.value = editProduct.price;
-            editProductCategories.value = editProduct.category.toLowerCase(); // to compare two values from drop-down list and from database, where one value can be with the capital letter
+            editProductCategories.value = editProduct.category.toLowerCase(); // to compare two values from drop-down list and from database, where one value can be with the capital letter.
             editPhotoOfTheProduct.value = editProduct.photoLinks;
             modalOverlay.style.display = 'flex';
             currentEditId = editProduct.id;
@@ -165,7 +165,7 @@ function findRemoveAndEditBtns(){
 
 addProductBtn.addEventListener('click', async () => {
     const newProduct = {
-        Name: removeExtraSpaces(inputNameOfTheProduct.value), // from shared.js to prevent data containing extra spaces from reaching the server
+        Name: removeExtraSpaces(inputNameOfTheProduct.value), // from shared.js to prevent data containing extra spaces from reaching the server.
         Category: productCategories.value,
         Description: removeExtraSpaces(descriptionOfTheProduct.value),
         Price: parseFloat(inputPriceOfTheProduct.value),
@@ -184,7 +184,7 @@ addProductBtn.addEventListener('click', async () => {
         });
         loadAdminProducts();
         if(postResponse.ok){ // clear form fields and display a toast message only if the response from the server is successful. Therefore, in the event of an error, the form remains filled out, and the administrator can correct the data.
-            inputNameOfTheProduct.value = ''; // clearing the field after sending data to the server
+            inputNameOfTheProduct.value = ''; // clearing the field after sending data to the server.
             descriptionOfTheProduct.value = '';
             inputPriceOfTheProduct.value = '';
             inputPhotoOfTheProduct.value = ''; // clearing the plain text, not the array that is created within the object.
@@ -201,7 +201,7 @@ addProductBtn.addEventListener('click', async () => {
     }
 });
 
-modalOverlay.style.display = 'none'; // hide the modal window
+modalOverlay.style.display = 'none'; // hide the modal window.
 
 saveChangesBtn.addEventListener('click', async () => {
     const changedProduct = {
@@ -224,7 +224,7 @@ saveChangesBtn.addEventListener('click', async () => {
         });
         loadAdminProducts();
         if(putResponse.ok){
-            modalOverlay.style.display = 'none'; // hide the modal window
+            modalOverlay.style.display = 'none'; // hide the modal window.
             showToastMessage(`${capitalizeEachWord(changedProduct.Name)} was changed`);
         } else {
             showToastMessage(`${capitalizeEachWord(changedProduct.Name)} was not changed`);
@@ -238,7 +238,7 @@ saveChangesBtn.addEventListener('click', async () => {
 });
 
 cancelBtn.addEventListener('click', () => {
-    modalOverlay.style.display = 'none'; // hide the modal window
+    modalOverlay.style.display = 'none'; // hide the modal window.
 });
 
 loadAdminProducts();

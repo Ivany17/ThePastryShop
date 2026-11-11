@@ -36,7 +36,7 @@ const errorLoadingCartMessage = `We couldn't load the cart. Please try again lat
 async function loadProductsInTheCart(){
     try {
         const getCartResponse = await fetch('http://localhost:5160/api/cart');
-        if(!getCartResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list
+        if(!getCartResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.
             buyBtn.disabled = true;
             containerForCards.innerHTML = errorLoadingCartMessage;
             console.error(`Failed to load the cart. The server returned an error with ${getCartResponse.status}`);
@@ -66,10 +66,10 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
         containerForCards.innerHTML = 'The cart is empty';
         return;
     }
-    const sortedCopyOfCards = [...listOfCards].sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt)); // sorts a copy, not the original list, so that drawing the cart does not change the order of cartData; the text is converted into a date to sort from newest to oldest
+    const sortedCopyOfCards = [...listOfCards].sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt)); // sorts a copy, not the original list, so that drawing the cart does not change the order of cartData; the text is converted into a date to sort from newest to oldest.
     const productsHTML = sortedCopyOfCards.map((cardInTheCart) => {
         const checkInTag = cardInTheCart.isSelected ? 'checked' : ''; // the `checked` attribute is used so that a checkbox appears with a checkmark.
-        // Capitalize first letter in every word in name and category for display only (data doesn't change)
+        // Capitalize first letter in every word in name and category for display only (data doesn't change).
         return `
             <div class="product-card-in-the-cart">
                 <input type="checkbox" class="checkedProductInTheCart" data-id="${cardInTheCart.productItem.id}" ${checkInTag}>
@@ -90,9 +90,9 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
 function findCheckbox(){
     const checkedProductInTheCart = document.querySelectorAll('.checkedProductInTheCart');
     checkedProductInTheCart.forEach(checkbox => {
-        checkbox.addEventListener('change', async () => { // 'change' is an event that triggers when a checkbox is checked or unchecked
-            const checkedProduct = { // we store a true/false value in an object so that the server can work with it
-                IsSelected: checkbox.checked, // IsSelected from class UpdateSelectedRequest in Program.cs
+        checkbox.addEventListener('change', async () => { // 'change' is an event that triggers when a checkbox is checked or unchecked.
+            const checkedProduct = { // we store a true/false value in an object so that the server can work with it.
+                IsSelected: checkbox.checked, // IsSelected from class UpdateSelectedRequest in Program.cs.
             };
             try {
                 const putResponseChecked = await fetch(`http://localhost:5160/api/cart/${checkbox.dataset.id}/checkbox`, {
@@ -108,7 +108,7 @@ function findCheckbox(){
                 showToastMessage(somethingWentWrongPhrase);
                 console.error(error);
             }
-            loadProductsInTheCart(); // placed after try/catch so it always runs: the browser toggles the checkbox itself before the server replies, so the cart must be redrawn from the server data even if the request failed
+            loadProductsInTheCart(); // placed after try/catch so it always runs: the browser toggles the checkbox itself before the server replies, so the cart must be redrawn from the server data even if the request failed.
         });
     });
 }
@@ -118,20 +118,21 @@ function findMinusAndPlusBtn(findBtn, changeInQuantity){
     quantityBtns.forEach(button => {
         button.addEventListener('click', async () => {
             const cardWithQuantity = cartData.find(cardInTheCart => cardInTheCart.productItem.id === parseInt(button.dataset.id, 10));
-            const newQuantity = cardWithQuantity.quantity + changeInQuantity; // the variable holds the current quantity of the item plus change in quantity, without changing the quantity in the item card
-            if(newQuantity < 1){ // the user should not be able to send a request to the server that would be rejected anyway
+            const newQuantity = cardWithQuantity.quantity + changeInQuantity; // the variable holds the current quantity of the item plus change in quantity, without changing the quantity in the item card.
+            if(newQuantity < 1){ // the user should not be able to send a request to the server that would be rejected anyway.
                 return;
             }
-            const changedQuantity = { // we store a number of quantity in an object so that the server can work with it
-                UpdateQuantity: newQuantity, // UpdateQuantity from class UpdateQuantityRequest in Program.cs
+            const changedQuantity = { // we store a number of quantity in an object so that the server can work with it.
+                UpdateQuantity: newQuantity, // UpdateQuantity from class UpdateQuantityRequest in Program.cs.
             };
+            button.disabled = true;
             try {
                 const putResponseBtns = await fetch(`http://localhost:5160/api/cart/${button.dataset.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(changedQuantity),
                 });
-                loadProductsInTheCart(); // runs after any reply from the server, successful or not, so that the cart on the screen always matches the server data
+                await loadProductsInTheCart(); // The click handler waits for the function to update the cart data, so that the next click works with the updated cart data.
                 if(!putResponseBtns.ok){
                     showToastMessage(somethingWentWrongPhrase);
                     console.error(`Failed to change the quantity of the item in the cart. The server returned an error with ${putResponseBtns.status}`);
@@ -139,6 +140,7 @@ function findMinusAndPlusBtn(findBtn, changeInQuantity){
             } catch (error){
                 showToastMessage(somethingWentWrongPhrase);
                 console.error(error);
+                button.disabled = false; // Enable the button if the server fails to respond and the cart does not re-render, allowing the user to retry without reloading the page.
             }
         });
     });

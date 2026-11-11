@@ -38,12 +38,12 @@ const somethingWentWrongPhrase = 'Something went wrong. Please try again';
 
 function renderFooter(page) {
     const footer = document.getElementById('footer-container');
-    // these three lines are the same for three files
+    // these three lines are the same for three files.
     footer.innerHTML = logoHTML;
     footer.innerHTML += addressHTML;
     footer.innerHTML += copyrightHTML;
     switch (page) {
-        // remove "break" from "welcome" because it has the same code with "shop"
+        // remove "break" from "welcome" because it has the same code with "shop".
         case 'welcome':
         case 'shop':
             footer.innerHTML += `<a href="admin.html">To Admin</a>`;
@@ -65,20 +65,20 @@ const copyrightHTML = `<p>&copy; Charodiya, 2026</p>`;
 
 function showToastMessage(textMessage) {
     const toastContainer = document.getElementById('toastContainer');
-    const toastMessage = document.createElement('p'); // create a new html element and saving it into the memory
+    const toastMessage = document.createElement('p'); // create a new html element and saving it into the memory.
     toastMessage.textContent = textMessage;
-    toastContainer.append(toastMessage); // add new element to the block and show it
-    setTimeout(() => toastMessage.remove(), 3000); // an arrow function is needed to delete an element in 3 seconds, rather than immediately
+    toastContainer.append(toastMessage); // add new element to the block and show it.
+    setTimeout(() => toastMessage.remove(), 3000); // an arrow function is needed to delete an element in 3 seconds, rather than immediately.
 }
 
 function capitalizeEachWord(phrase) {
-    // make the first letter uppercase, and all other letters in the word lowercase
+    // make the first letter uppercase, and all other letters in the word lowercase.
     return phrase
         .toLowerCase()
         .trim() // trim() that removes extra spaces before and after a text should be used before the phrase is split; otherwise, these extra spaces will cause the code to fail.
         .split(/\s+/) // a regular expression (regex) pattern that treats one or more spaces within a phrase as a single separator; otherwise, these extra spaces inside a phrase will cause the code to fail.
         .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-        .join(' '); // If the string is empty, `word.charAt(0)` returns an empty string, on which `toUpperCase()` can be used, unlike word[0], which would break the code
+        .join(' '); // If the string is empty, `word.charAt(0)` returns an empty string, on which `toUpperCase()` can be used, unlike word[0], which would break the code.
 }
 
 function removeExtraSpaces(phrase) {
@@ -89,9 +89,9 @@ function hasTheFormEmptyFields(filledForm) {
     return filledForm.Name.length === 0 || filledForm.Description.length === 0 || Number.isNaN(filledForm.Price) || filledForm.Price <= 0;
 }
 
-// Returns a price as text for display only, so that every price in the project looks the same and the format can be changed in one place
+// Returns a price as text for display only, so that every price in the project looks the same and the format can be changed in one place.
 function showPriceWithTwoDecimalPlaces(price){
-    return price.toFixed(2); // rounds the number to remove floating-point "tails" like 299.96999999999997, and returns text with exactly two digits after the decimal point
+    return price.toFixed(2); // rounds the number to remove floating-point "tails" like 299.96999999999997, and returns text with exactly two digits after the decimal point.
 }
 
 // This block replaces dangerous characters with safe ones before they reach `innerHTML`, ensuring the text is displayed as plain text.
