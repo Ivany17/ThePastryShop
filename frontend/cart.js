@@ -16,7 +16,7 @@ cartBtn.addEventListener('click', () => {
 
 buyBtn.addEventListener('click', async () => {
     try {
-        const deleteAllResponse = await fetch('http://localhost:5160/api/cart/checked', {
+        const deleteAllResponse = await fetch(`${serverAddress}/api/cart/checked`, {
             method: 'DELETE',
         });
         loadProductsInTheCart();
@@ -35,7 +35,7 @@ buyBtn.addEventListener('click', async () => {
 const errorLoadingCartMessage = `We couldn't load the cart. Please try again later.`;
 async function loadProductsInTheCart(){
     try {
-        const getCartResponse = await fetch('http://localhost:5160/api/cart');
+        const getCartResponse = await fetch(`${serverAddress}/api/cart`);
         if(!getCartResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.
             buyBtn.disabled = true;
             containerForCards.innerHTML = errorLoadingCartMessage;
@@ -95,7 +95,7 @@ function findCheckbox(){
                 IsSelected: checkbox.checked, // IsSelected from class UpdateSelectedRequest in Program.cs.
             };
             try {
-                const putResponseChecked = await fetch(`http://localhost:5160/api/cart/${checkbox.dataset.id}/checkbox`, {
+                const putResponseChecked = await fetch(`${serverAddress}/api/cart/${checkbox.dataset.id}/checkbox`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(checkedProduct),
@@ -127,7 +127,7 @@ function findMinusAndPlusBtn(findBtn, changeInQuantity){
             };
             button.disabled = true;
             try {
-                const putResponseBtns = await fetch(`http://localhost:5160/api/cart/${button.dataset.id}`, {
+                const putResponseBtns = await fetch(`${serverAddress}/api/cart/${button.dataset.id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(changedQuantity),
@@ -140,7 +140,7 @@ function findMinusAndPlusBtn(findBtn, changeInQuantity){
             } catch (error){
                 showToastMessage(somethingWentWrongPhrase);
                 console.error(error);
-                button.disabled = false; // Enable the button if the server fails to respond and the cart does not re-render, allowing the user to retry without reloading the page.
+                button.disabled = false; // Enable the button if the server fails to respond and the cart is not re-rendered, allowing the user to retry without reloading the page.
             }
         });
     });
@@ -155,7 +155,7 @@ function findDeleteBtn(){
                 return;
             }
             try {
-                const deleteResponse = await fetch(`http://localhost:5160/api/cart/${delBtn.dataset.id}`, {
+                const deleteResponse = await fetch(`${serverAddress}/api/cart/${delBtn.dataset.id}`, {
                     method: 'DELETE',
                 });
                 loadProductsInTheCart();

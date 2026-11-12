@@ -61,7 +61,7 @@ const productsContainer = document.getElementById('products-container');
 const errorLoadingMessage = `We couldn't load the products. Please try again later.`;
 async function loadProducts(){
     try {
-        const getResponse = await fetch('http://localhost:5160/api/products');
+        const getResponse = await fetch(`${serverAddress}/api/products`);
         if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.
             productsContainer.innerHTML = errorLoadingMessage;
             return;
@@ -108,7 +108,7 @@ function findAddBtn(){
         b.addEventListener('click', async () => {
             const addedProduct = data.find(d => d.id === parseInt(b.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
             try {
-                const postResponse = await fetch(`http://localhost:5160/api/cart/${b.dataset.id}`, { method: 'POST' }); // to add the product in the cart on the server.
+                const postResponse = await fetch(`${serverAddress}/api/cart/${b.dataset.id}`, { method: 'POST' }); // to add the product in the cart on the server.
                 loadProductsInTheCart(); // a function from cart.js that runs after any reply from the server, successful or not, so that the cart on the screen always matches the server data.
                 if(postResponse.ok){
                     showToastMessage(`${capitalizeEachWord(addedProduct.name)} was added to the cart`);

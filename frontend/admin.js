@@ -82,7 +82,7 @@ headerCookiesBtn.addEventListener('click', () => {
 
 async function loadAdminProducts(){
     try {
-        const getResponse = await fetch('http://localhost:5160/api/products');
+        const getResponse = await fetch(`${serverAddress}/api/products`);
         if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.
             productsContainer.innerHTML = `Failed to load products. The server returned an error.`;
             return;
@@ -132,7 +132,7 @@ function findRemoveAndEditBtns(){
                 return;
             } else {
                 try {
-                    const removeResponse = await fetch(`http://localhost:5160/api/products/${b.dataset.id}`, {
+                    const removeResponse = await fetch(`${serverAddress}/api/products/${b.dataset.id}`, {
                         method: 'DELETE',
                     });
                     loadAdminProducts();
@@ -177,7 +177,7 @@ addProductBtn.addEventListener('click', async () => {
     }
     addProductBtn.disabled = true;
     try {
-        const postResponse = await fetch('http://localhost:5160/api/products', {
+        const postResponse = await fetch(`${serverAddress}/api/products`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(newProduct),
@@ -217,7 +217,7 @@ saveChangesBtn.addEventListener('click', async () => {
     }
     saveChangesBtn.disabled = true;
     try {
-        const putResponse = await fetch(`http://localhost:5160/api/products/${currentEditId}`, {
+        const putResponse = await fetch(`${serverAddress}/api/products/${currentEditId}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(changedProduct),

@@ -116,6 +116,8 @@ function replaceSingleQuote(text){
     return text.replaceAll(`'`, '&#39;');
 }
 
+const serverAddress = 'http://localhost:5160';
+
 // A function that combines the five escape functions into a chain and invokes them in the correct order to escape text before inserting it into innerHTML.
 function safeHTMLcodes(text){
     const ampersand = replaceAmpersand(text);
