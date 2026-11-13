@@ -79,7 +79,7 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
                 <p>${safeHTMLcodes(cardInTheCart.productItem.description)}</p>
                 <button class="minusBtn" data-id="${cardInTheCart.productItem.id}">-</button>
                 <p>${cardInTheCart.quantity}</p>
-                <button class="plusBtn" data-id="${cardInTheCart.productItem.id}">+</button>
+                <button class="plusBtn" data-id="${cardInTheCart.productItem.id}" aria-label="Increase quantity of ${safeHTMLcodes(capitalizeEachWord(cardInTheCart.productItem.name))}">+</button>
                 <p>${showPriceWithTwoDecimalPlaces(cardInTheCart.productItem.price * cardInTheCart.quantity)} ₴</p>
             </div>
         `;
