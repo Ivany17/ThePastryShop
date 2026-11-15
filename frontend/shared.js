@@ -94,6 +94,12 @@ function showPriceWithTwoDecimalPlaces(price){
     return price.toFixed(2); // rounds the number to remove floating-point "tails" like 299.96999999999997, and returns text with exactly two digits after the decimal point.
 }
 
+function showErrorMessage(toastErrorMsg, consoleErrorMsg){
+    showToastMessage(toastErrorMsg);
+    console.error(consoleErrorMsg);
+}
+
+
 // This block replaces dangerous characters with safe ones before they reach `innerHTML`, ensuring the text is displayed as plain text.
 // The replacement for the ampersand (&) must come first, because the safe codes for other characters also contain an ampersand.
 function replaceAmpersand(text){
