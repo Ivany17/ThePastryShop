@@ -1,10 +1,11 @@
 //shared.js
+let welcomeHeader = logoHTML;
 function renderHeader(page) {
     const header = document.getElementById('header-container');
     switch (page) {
         case 'welcome':
-            header.innerHTML = logoHTML;
-            header.innerHTML += navHTML;
+            welcomeHeader += navHTML;
+            header.innerHTML = welcomeHeader;
             break;
         case 'shop':
             header.innerHTML = logoHTML;

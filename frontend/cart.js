@@ -157,7 +157,7 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
         const nameOfProductForHTML = safeHTMLcodes(capitalizeEachWord(productInTheCard.name));
         const idOfTheProduct = productInTheCard.id;
         const checkInTag = cardInTheCart.isSelected ? 'checked' : ''; // the `checked` attribute is used so that a checkbox appears with a checkmark.
-        const disabledBtn = cardInTheCart.quantity === 1 ? 'disabled' : '';
+        const disabledInTag = cardInTheCart.quantity === 1 ? 'disabled' : ''; // The `disabled` attribute is added to the minus button at quantity 1, so a request that the server would reject (quantity below 1) is never sent.
         // Capitalize first letter in every word in name and category for display only (data doesn't change).
         // The checkbox is wrapped in a `label` and the plus, minus and Delete buttons have an `aria-label`, so that a screen reader can announce which product each of them belongs to.
         return `
@@ -169,7 +169,7 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
                 <h3>${nameOfProductForHTML}</h3>
                 <p>${safeHTMLcodes(capitalizeEachWord(productInTheCard.category))}</p>
                 <p>${safeHTMLcodes(productInTheCard.description)}</p>
-                <button class="minusBtn" data-id="${idOfTheProduct}" aria-label="Decrease quantity of ${nameOfProductForHTML}" ${disabledBtn}>-</button>
+                <button class="minusBtn" data-id="${idOfTheProduct}" aria-label="Decrease quantity of ${nameOfProductForHTML}" ${disabledInTag}>-</button>
                 <p>${cardInTheCart.quantity}</p>
                 <button class="plusBtn" data-id="${idOfTheProduct}" aria-label="Increase quantity of ${nameOfProductForHTML}">+</button>
                 <p>${showPriceWithTwoDecimalPlaces(productInTheCard.price * cardInTheCart.quantity)} ₴</p>
