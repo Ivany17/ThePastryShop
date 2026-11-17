@@ -1,27 +1,25 @@
 //shared.js
-let welcomeHeader = logoHTML;
 function renderHeader(page) {
     const header = document.getElementById('header-container');
+    let headerHTML = logoHTML;
     switch (page) {
         case 'welcome':
-            welcomeHeader += navHTML;
-            header.innerHTML = welcomeHeader;
+            headerHTML += navHTML;
             break;
         case 'shop':
-            header.innerHTML = logoHTML;
-            header.innerHTML += `<input type="text" id="searchProducts">`;
-            header.innerHTML += navHTML;
-            header.innerHTML += `<button id="cartBtn">🛒</button>`;
+            headerHTML += `<input type="text" id="searchProducts">`;
+            headerHTML += navHTML;
+            headerHTML += `<button id="cartBtn">🛒</button>`;
             break;
         case 'admin':
-            header.innerHTML = logoHTML;
-            header.innerHTML += `<input type="text" id="searchProducts">`;
-            header.innerHTML += navHTML;
-            header.innerHTML += `<a href="shop.html">To Shop</a>`;
+            headerHTML += `<input type="text" id="searchProducts">`;
+            headerHTML += navHTML;
+            headerHTML += `<a href="shop.html">To Shop</a>`;
             break;
         default:
             console.log('Wrong page');
     }
+    header.innerHTML = headerHTML;
 }
 
 const logoHTML = `<a href="index.html">
@@ -39,21 +37,21 @@ const somethingWentWrongPhrase = 'Something went wrong. Please try again';
 
 function renderFooter(page) {
     const footer = document.getElementById('footer-container');
-    // these three lines are the same for three files.
-    footer.innerHTML = logoHTML;
-    footer.innerHTML += addressHTML;
-    footer.innerHTML += copyrightHTML;
+    let footerHTML = logoHTML;
+    footerHTML += addressHTML;
+    footerHTML += copyrightHTML;
     switch (page) {
         // remove "break" from "welcome" because it has the same code with "shop".
         case 'welcome':
         case 'shop':
-            footer.innerHTML += `<a href="admin.html">To Admin</a>`;
+            footerHTML += `<a href="admin.html">To Admin</a>`;
             break;
         case 'admin':
             break;
         default:
             console.log('Wrong page');
     }
+    footer.innerHTML = footerHTML;
 }
 
 const addressHTML = `<address>
