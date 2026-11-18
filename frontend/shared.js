@@ -1,23 +1,23 @@
 //shared.js
-function renderHeader(page) {
+function renderHeader(page){
     const header = document.getElementById('header-container');
     let headerHTML = logoHTML;
-    switch (page) {
+    switch(page){
         case 'welcome':
             headerHTML += navHTML;
             break;
         case 'shop':
-            headerHTML += `<input type="text" id="searchProducts">`;
+            headerHTML += '<input type="text" id="searchProducts">';
             headerHTML += navHTML;
-            headerHTML += `<button id="cartBtn">🛒</button>`;
+            headerHTML += '<button id="cartBtn">🛒</button>';
             break;
         case 'admin':
-            headerHTML += `<input type="text" id="searchProducts">`;
+            headerHTML += '<input type="text" id="searchProducts">';
             headerHTML += navHTML;
-            headerHTML += `<a href="shop.html">To Shop</a>`;
+            headerHTML += '<a href="shop.html">To Shop</a>';
             break;
         default:
-            console.log('Wrong page');
+            console.error('Wrong page');
     }
     header.innerHTML = headerHTML;
 }
@@ -33,23 +33,25 @@ const navHTML = `<nav>
         <button id="headerCookiesBtn">Cookies</button>
     </nav>`;
 
+const serverAddress = 'http://localhost:5160';
+
 const somethingWentWrongPhrase = 'Something went wrong. Please try again';
 
-function renderFooter(page) {
+function renderFooter(page){
     const footer = document.getElementById('footer-container');
     let footerHTML = logoHTML;
     footerHTML += addressHTML;
     footerHTML += copyrightHTML;
-    switch (page) {
+    switch(page){
         // remove "break" from "welcome" because it has the same code with "shop".
         case 'welcome':
         case 'shop':
-            footerHTML += `<a href="admin.html">To Admin</a>`;
+            footerHTML += '<a href="admin.html">To Admin</a>';
             break;
         case 'admin':
             break;
         default:
-            console.log('Wrong page');
+            console.error('Wrong page');
     }
     footer.innerHTML = footerHTML;
 }
@@ -60,9 +62,9 @@ const addressHTML = `<address>
         <p>8 am - 5 pm</p>
     </address>`;
 
-const copyrightHTML = `<p>&copy; Charodiya, 2026</p>`;
+const copyrightHTML = '<p>&copy; Charodiya, 2026</p>';
 
-function showToastMessage(textMessage) {
+function showToastMessage(textMessage){
     const toastContainer = document.getElementById('toastContainer');
     const toastMessage = document.createElement('p'); // create a new html element and saving it into the memory.
     toastMessage.textContent = textMessage;
@@ -70,7 +72,7 @@ function showToastMessage(textMessage) {
     setTimeout(() => toastMessage.remove(), 3000); // an arrow function is needed to delete an element in 3 seconds, rather than immediately.
 }
 
-function capitalizeEachWord(phrase) {
+function capitalizeEachWord(phrase){
     // make the first letter uppercase, and all other letters in the word lowercase.
     return phrase
         .toLowerCase()
@@ -80,11 +82,11 @@ function capitalizeEachWord(phrase) {
         .join(' '); // If the string is empty, `word.charAt(0)` returns an empty string, on which `toUpperCase()` can be used, unlike word[0], which would break the code.
 }
 
-function removeExtraSpaces(phrase) {
+function removeExtraSpaces(phrase){
     return phrase.trim().replace(/\s+/g, ' '); // Remove extra spaces in the middle using .replace and at the beginning and at the end of a phrase using trim(), to prevent data containing extra spaces from reaching the server.
 }
 
-function hasTheFormEmptyFields(filledForm) {
+function hasTheFormEmptyFields(filledForm){
     return filledForm.Name.length === 0 || filledForm.Description.length === 0 || Number.isNaN(filledForm.Price) || filledForm.Price <= 0;
 }
 
@@ -120,8 +122,6 @@ function replaceDoubleQuote(text){
 function replaceSingleQuote(text){
     return text.replaceAll(`'`, '&#39;');
 }
-
-const serverAddress = 'http://localhost:5160';
 
 // A function that combines the five escape functions into a chain and invokes them in the correct order to escape text before inserting it into innerHTML.
 function safeHTMLcodes(text){
