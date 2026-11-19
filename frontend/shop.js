@@ -57,6 +57,13 @@ headerCookiesBtn.addEventListener('click', () => {
 });
 
 const productsContainer = document.getElementById('products-container');
+productsContainer.addEventListener('click', (event) => {
+    const addBtn = event.target.closest('.addBtn');
+    if(addBtn === null){
+        return;
+    }
+    addTheProductInTheCart(addBtn);
+});
 
 const errorLoadingMessage = `We couldn't load the products. Please try again later.`;
 async function loadProducts(){
@@ -102,23 +109,27 @@ function renderProducts(productsArray){
     productsContainer.innerHTML = productsHTML;
 }
 
+async function addTheProductInTheCart(button){
+    const addedProduct = data.find(d => d.id === parseInt(button.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
+    try {
+        const postResponse = await fetch(`${serverAddress}/api/cart/${button.dataset.id}`, { method: 'POST' }); // to add the product in the cart on the server.
+        loadProductsInTheCart(); // a function from cart.js that runs after any reply from the server, successful or not, so that the cart on the screen always matches the server data.
+        if(postResponse.ok){
+            showToastMessage(`${capitalizeEachWord(addedProduct.name)} was added to the cart`);
+        } else {
+            showToastMessage(`${capitalizeEachWord(addedProduct.name)} was not added to the cart`);
+        }
+    } catch (error){
+        showToastMessage(somethingWentWrongPhrase);
+        console.error(error);
+    }
+}
+
 function findAddBtn(){
     const addBtn = document.querySelectorAll('.addBtn');
     addBtn.forEach(b => {
         b.addEventListener('click', async () => {
-            const addedProduct = data.find(d => d.id === parseInt(b.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
-            try {
-                const postResponse = await fetch(`${serverAddress}/api/cart/${b.dataset.id}`, { method: 'POST' }); // to add the product in the cart on the server.
-                loadProductsInTheCart(); // a function from cart.js that runs after any reply from the server, successful or not, so that the cart on the screen always matches the server data.
-                if(postResponse.ok){
-                    showToastMessage(`${capitalizeEachWord(addedProduct.name)} was added to the cart`);
-                } else {
-                    showToastMessage(`${capitalizeEachWord(addedProduct.name)} was not added to the cart`);
-                }
-            } catch (error){
-                showToastMessage(somethingWentWrongPhrase);
-                console.error(error);
-            }
+            addTheProductInTheCart(b);
         });
     });
 }

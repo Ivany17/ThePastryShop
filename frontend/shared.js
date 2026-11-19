@@ -1,4 +1,27 @@
 //shared.js
+const serverAddress = 'http://localhost:5160';
+
+const somethingWentWrongPhrase = 'Something went wrong. Please try again';
+
+const logoHTML = `<a href="index.html">
+        <h2>Charodiya</h2>
+    </a>`;
+
+const navHTML = `<nav>
+        <button id="headerAllBtn">All</button>
+        <button id="headerCakesBtn">Cakes</button>
+        <button id="headerPastriesBtn">Pastries</button>
+        <button id="headerCookiesBtn">Cookies</button>
+    </nav>`;
+
+const addressHTML = `<address>
+        <p>Osvita street, 35</p>
+        <p>+380 95 768 09 33</p>
+        <p>8 am - 5 pm</p>
+    </address>`;
+
+const copyrightHTML = '<p>&copy; Charodiya, 2026</p>';
+
 function renderHeader(page){
     const header = document.getElementById('header-container');
     let headerHTML = logoHTML;
@@ -22,29 +45,13 @@ function renderHeader(page){
     header.innerHTML = headerHTML;
 }
 
-const logoHTML = `<a href="index.html">
-        <h2>Charodiya</h2>
-    </a>`;
-
-const navHTML = `<nav>
-        <button id="headerAllBtn">All</button>
-        <button id="headerCakesBtn">Cakes</button>
-        <button id="headerPastriesBtn">Pastries</button>
-        <button id="headerCookiesBtn">Cookies</button>
-    </nav>`;
-
-const serverAddress = 'http://localhost:5160';
-
-const somethingWentWrongPhrase = 'Something went wrong. Please try again';
-
 function renderFooter(page){
     const footer = document.getElementById('footer-container');
     let footerHTML = logoHTML;
     footerHTML += addressHTML;
     footerHTML += copyrightHTML;
     switch(page){
-        // remove "break" from "welcome" because it has the same code with "shop".
-        case 'welcome':
+        case 'welcome': // remove "break" from "welcome" because it has the same code with "shop".
         case 'shop':
             footerHTML += '<a href="admin.html">To Admin</a>';
             break;
@@ -56,14 +63,6 @@ function renderFooter(page){
     footer.innerHTML = footerHTML;
 }
 
-const addressHTML = `<address>
-        <p>Osvita street, 35</p>
-        <p>+380 95 768 09 33</p>
-        <p>8 am - 5 pm</p>
-    </address>`;
-
-const copyrightHTML = '<p>&copy; Charodiya, 2026</p>';
-
 function showToastMessage(textMessage){
     const toastContainer = document.getElementById('toastContainer');
     const toastMessage = document.createElement('p'); // create a new html element and saving it into the memory.
@@ -72,8 +71,8 @@ function showToastMessage(textMessage){
     setTimeout(() => toastMessage.remove(), 3000); // an arrow function is needed to delete an element in 3 seconds, rather than immediately.
 }
 
+// make the first letter uppercase, and all other letters in the word lowercase.
 function capitalizeEachWord(phrase){
-    // make the first letter uppercase, and all other letters in the word lowercase.
     return phrase
         .toLowerCase()
         .trim() // trim() that removes extra spaces before and after a text should be used before the phrase is split; otherwise, these extra spaces will cause the code to fail.
@@ -99,7 +98,6 @@ function showErrorMessage(toastErrorMsg, consoleErrorMsg){
     showToastMessage(toastErrorMsg);
     console.error(consoleErrorMsg);
 }
-
 
 // This block replaces dangerous characters with safe ones before they reach `innerHTML`, ensuring the text is displayed as plain text.
 // The replacement for the ampersand (&) must come first, because the safe codes for other characters also contain an ampersand.
