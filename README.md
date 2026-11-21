@@ -1,6 +1,6 @@
 # ThePastryShop (Charodiya)
 
-Online store for confectionery products. Full-stack learning project: a REST API on ASP.NET Core and a plain JavaScript frontend. **In development.**
+Online store for pastry products. Full-stack learning project: a REST API on ASP.NET Core and a plain JavaScript frontend. **In development.**
 
 ## Features
 
