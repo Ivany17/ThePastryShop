@@ -15,13 +15,11 @@ searchProducts.addEventListener('input', () => {
     }
     const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase()))); // search only in certain category.
     renderProducts(filteredByName);
-    findAddBtn();
 });
 
 function showCurrentListOfProducts(currentListOfProducts){
     currentProductsByCategory = [...currentListOfProducts].sort((a, b) => b.id - a.id); // sorts a copy so the original list stays unchanged; the sorted list is stored here so that search filters it and keeps the newest-first order (a larger id means a newer product).
     renderProducts(currentProductsByCategory);
-    findAddBtn();
     searchProducts.value = '';
 }
 
@@ -71,6 +69,7 @@ async function loadProducts(){
         const getResponse = await fetch(`${serverAddress}/api/products`);
         if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.
             productsContainer.innerHTML = errorLoadingMessage;
+            console.error(`Failed to load the products. The server returned an error with ${getResponse.status}`);
             return;
         }
         data = await getResponse.json();
@@ -110,28 +109,22 @@ function renderProducts(productsArray){
 }
 
 async function addTheProductInTheCart(button){
-    const addedProduct = data.find(d => d.id === parseInt(button.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
+    const addedProduct = findProductById(data, button);
+    if(addedProduct === undefined){ // If `addedProduct` is not found in the list, the function returns before the request is made; this prevents further operations with `undefined` and avoids showing the user an incorrect error.
+        return;
+    }
+    const nameOfTheProduct = capitalizeEachWord(addedProduct.name);
     try {
         const postResponse = await fetch(`${serverAddress}/api/cart/${button.dataset.id}`, { method: 'POST' }); // to add the product in the cart on the server.
         loadProductsInTheCart(); // a function from cart.js that runs after any reply from the server, successful or not, so that the cart on the screen always matches the server data.
         if(postResponse.ok){
-            showToastMessage(`${capitalizeEachWord(addedProduct.name)} was added to the cart`);
+            showToastMessage(`${nameOfTheProduct} was added to the cart`);
         } else {
-            showToastMessage(`${capitalizeEachWord(addedProduct.name)} was not added to the cart`);
+            showErrorMessage(`${nameOfTheProduct} was not added to the cart`, `Failed to add the product in the cart. The server returned an error with ${postResponse.status}`);
         }
     } catch (error){
-        showToastMessage(somethingWentWrongPhrase);
-        console.error(error);
+        showErrorMessage(somethingWentWrongPhrase, error);
     }
-}
-
-function findAddBtn(){
-    const addBtn = document.querySelectorAll('.addBtn');
-    addBtn.forEach(b => {
-        b.addEventListener('click', async () => {
-            addTheProductInTheCart(b);
-        });
-    });
 }
 
 loadProducts();

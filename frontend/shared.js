@@ -63,6 +63,10 @@ function renderFooter(page){
     footer.innerHTML = footerHTML;
 }
 
+function findProductById(listOfProducts, button){
+    return listOfProducts.find(list => list.id === parseInt(button.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
+}
+
 function showToastMessage(textMessage){
     const toastContainer = document.getElementById('toastContainer');
     const toastMessage = document.createElement('p'); // create a new html element and saving it into the memory.

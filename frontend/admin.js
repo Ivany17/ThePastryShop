@@ -85,6 +85,7 @@ async function loadAdminProducts(){
         const getResponse = await fetch(`${serverAddress}/api/products`);
         if(!getResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.
             productsContainer.innerHTML = `Failed to load products. The server returned an error.`;
+            console.error(`Failed to load the products. The server returned an error with ${getResponse.status}`);
             return;
         }
         data = await getResponse.json();
@@ -127,7 +128,10 @@ function findRemoveAndEditBtns(){
     const removeBtn = document.querySelectorAll('.removeBtn');
     removeBtn.forEach(b => {
         b.addEventListener('click', async () => {
-            const removedProduct = data.find(d => d.id === parseInt(b.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
+            const removedProduct = findProductById(data, b);
+            if(removedProduct === undefined){ // If `removedProduct` is not found in the list, the function returns before reaching `confirm` and the request, to avoid working with `undefined`.
+                return;
+            }
             if(!confirm(`Do you really want to delete ${capitalizeEachWord(removedProduct.name)}?`)){
                 return;
             } else {
@@ -139,11 +143,10 @@ function findRemoveAndEditBtns(){
                     if(removeResponse.ok){
                         showToastMessage(`${capitalizeEachWord(removedProduct.name)} deleted successfully`);
                     } else {
-                        showToastMessage(`${capitalizeEachWord(removedProduct.name)} was not deleted`);
+                        showErrorMessage(`${capitalizeEachWord(removedProduct.name)} was not deleted`, `Failed to delete the product. The server returned an error with ${removeResponse.status}`);
                     }
                 } catch (error){
-                    showToastMessage(`${capitalizeEachWord(removedProduct.name)} was not deleted. Check if the server is running.`);
-                    console.error(error);
+                    showErrorMessage(`${capitalizeEachWord(removedProduct.name)} was not deleted. Check if the server is running.`, error);
                 }
             }
         });
@@ -151,7 +154,10 @@ function findRemoveAndEditBtns(){
     const editBtn = document.querySelectorAll('.editBtn');
     editBtn.forEach(b => {
         b.addEventListener('click', () => { // Find the product with its id, not with saving it in HTML to avoid errors from/with special characters.
-            const editProduct = data.find(d => d.id === parseInt(b.dataset.id, 10));
+            const editProduct = findProductById(data, b);
+            if(editProduct === undefined){
+                return;
+            }
             editNameOfTheProduct.value = editProduct.name;
             editDescriptionOfTheProduct.value = editProduct.description;
             editPriceOfTheProduct.value = editProduct.price;
@@ -191,11 +197,10 @@ addProductBtn.addEventListener('click', async () => {
             productCategories.selectedIndex = 0; // reset the drop-down list—where the first option equals 0—so that the category is set back to the default for the next product.
             showToastMessage(`${capitalizeEachWord(newProduct.Name)} added successfully to the ${capitalizeEachWord(newProduct.Category)} category`); // at this moment, the form fields have already been cleared, and the object still holds the values.
         } else {
-            showToastMessage(`${capitalizeEachWord(newProduct.Name)} was not added`);
+            showErrorMessage(`${capitalizeEachWord(newProduct.Name)} was not added`, `Failed to add the product. The server returned an error with ${postResponse.status}`);
         }
     } catch (error){
-        showToastMessage(`${capitalizeEachWord(newProduct.Name)} was not added. Check if the server is running.`);
-        console.error(error);
+        showErrorMessage(`${capitalizeEachWord(newProduct.Name)} was not added. Check if the server is running.`, error);
     } finally {
         addProductBtn.disabled = false;
     }
@@ -227,11 +232,10 @@ saveChangesBtn.addEventListener('click', async () => {
             modalOverlay.style.display = 'none'; // hide the modal window.
             showToastMessage(`${capitalizeEachWord(changedProduct.Name)} was changed`);
         } else {
-            showToastMessage(`${capitalizeEachWord(changedProduct.Name)} was not changed`);
+            showErrorMessage(`${capitalizeEachWord(changedProduct.Name)} was not changed`, `Failed to change the product. The server returned an error with ${putResponse.status}`);
         }
     } catch (error){
-        showToastMessage(`${capitalizeEachWord(changedProduct.Name)} was not changed. Check if the server is running.`);
-        console.error(error);
+        showErrorMessage(`${capitalizeEachWord(changedProduct.Name)} was not changed. Check if the server is running.`, error);
     } finally {
         saveChangesBtn.disabled = false;
     }
