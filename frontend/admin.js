@@ -1,4 +1,18 @@
 //admin.js
+import {
+    renderHeader,
+    renderFooter,
+    serverAddress,
+    findProductById,
+    showToastMessage,
+    capitalizeEachWord,
+    removeExtraSpaces,
+    hasTheFormEmptyFields,
+    showPriceWithTwoDecimalPlaces,
+    showErrorMessage,
+    safeHTMLcodes
+} from './shared.js';
+
 renderHeader('admin');
 renderFooter('admin');
 
@@ -18,7 +32,7 @@ const editPhotoOfTheProduct = document.getElementById('editPhotoOfTheProduct');
 const saveChangesBtn = document.getElementById('saveChangesBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 let currentEditId;
-let listOfProducts;
+let listOfAdminProducts;
 let currentProductsByCategory; // stores the current list of products in certain category.
 let currentCategory = null; // Stores the selected category. After adding, editing, or deleting a product, the user remains in the current category. `null` indicates that no specific category has been selected.
 
@@ -44,22 +58,22 @@ function showCurrentListOfProducts(currentListOfProducts){
 }
 
 function showFilteredProductsByCategory(category){
-    if(!listOfProducts){
+    if(!listOfAdminProducts){
         return;
     }
-    const currentList = listOfProducts.filter(p => p.category.toLowerCase() === category);
+    const currentList = listOfAdminProducts.filter(p => p.category.toLowerCase() === category);
     currentCategory = category;
     showCurrentListOfProducts(currentList);
 }
 
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
-    if(!listOfProducts){
+    if(!listOfAdminProducts){
         return;
     }
     currentCategory = null;
     searchProducts.value = '';
-    showCurrentListOfProducts(listOfProducts);
+    showCurrentListOfProducts(listOfAdminProducts);
 });
 
 const headerCakesBtn = document.getElementById('headerCakesBtn');
@@ -88,11 +102,11 @@ async function loadAdminProducts(){
             console.error(`Failed to load the products. The server returned an error with ${getResponse.status}`);
             return;
         }
-        listOfProducts = await getResponse.json();
+        listOfAdminProducts = await getResponse.json();
         if(currentCategory){
             showFilteredProductsByCategory(currentCategory);
         } else {
-            showCurrentListOfProducts(listOfProducts);
+            showCurrentListOfProducts(listOfAdminProducts);
         }
         filterAndShowByName();
     } catch (error){
@@ -102,7 +116,7 @@ async function loadAdminProducts(){
 }
 
 function renderAdminProducts(productsArray){
-    if(listOfProducts.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
+    if(listOfAdminProducts.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
         productsContainer.innerHTML = `There are no products yet`;
         return;
     } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category.
@@ -128,7 +142,7 @@ function findRemoveAndEditBtns(){
     const removeBtn = document.querySelectorAll('.removeBtn');
     removeBtn.forEach(button => {
         button.addEventListener('click', async () => {
-            const removedProduct = findProductById(listOfProducts, button);
+            const removedProduct = findProductById(listOfAdminProducts, button);
             if(removedProduct === undefined){ // If `removedProduct` is not found in the list, the function returns before reaching `confirm` and the request, to avoid working with `undefined`.
                 return;
             }
@@ -155,7 +169,7 @@ function findRemoveAndEditBtns(){
     const editBtn = document.querySelectorAll('.editBtn');
     editBtn.forEach(button => {
         button.addEventListener('click', () => { // Find the product with its id, not with saving it in HTML to avoid errors from/with special characters.
-            const editProduct = findProductById(listOfProducts, button);
+            const editProduct = findProductById(listOfAdminProducts, button);
             if(editProduct === undefined){
                 return;
             }

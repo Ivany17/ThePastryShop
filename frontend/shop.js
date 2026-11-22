@@ -1,8 +1,28 @@
 //shop.js
-let listOfProducts;
+import {
+    renderHeader,
+    renderFooter,
+    serverAddress,
+    somethingWentWrongPhrase,
+    findProductById,
+    showToastMessage,
+    capitalizeEachWord,
+    removeExtraSpaces,
+    showPriceWithTwoDecimalPlaces,
+    showErrorMessage,
+    safeHTMLcodes
+} from './shared.js';
+import {
+    loadProductsInTheCart,
+    launchTheCart
+} from './cart.js';
+
+let listOfShopProducts;
 let currentProductsByCategory; // stores the current list of products in certain category.
 renderHeader('shop');
 renderFooter('shop');
+
+launchTheCart();
 
 const queryString = window.location.search; // get queryString - the part of address with "?" and further.
 const params = new URLSearchParams(queryString); // make the object from the string.
@@ -24,19 +44,19 @@ function showCurrentListOfProducts(currentListOfProducts){
 }
 
 function showFilteredProductsByCategory(category){
-    if(!listOfProducts){
+    if(!listOfShopProducts){
         return;
     }
-    const currentList = listOfProducts.filter(p => p.category.toLowerCase() === category);
+    const currentList = listOfShopProducts.filter(p => p.category.toLowerCase() === category);
     showCurrentListOfProducts(currentList);
 }
 
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
-    if(!listOfProducts){
+    if(!listOfShopProducts){
         return;
     }
-    showCurrentListOfProducts(listOfProducts);
+    showCurrentListOfProducts(listOfShopProducts);
 });
 
 const headerCakesBtn = document.getElementById('headerCakesBtn');
@@ -72,11 +92,11 @@ async function loadProducts(){
             console.error(`Failed to load the products. The server returned an error with ${getResponse.status}`);
             return;
         }
-        listOfProducts = await getResponse.json();
+        listOfShopProducts = await getResponse.json();
         if(!categoryParam){ // If the category parameter is missing from the address or is empty, then all products are displayed.
-            showCurrentListOfProducts(listOfProducts);
+            showCurrentListOfProducts(listOfShopProducts);
         } else {
-            const filterByCategories = listOfProducts.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
+            const filterByCategories = listOfShopProducts.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
             showCurrentListOfProducts(filterByCategories);
         }
     } catch (error){
@@ -86,7 +106,7 @@ async function loadProducts(){
 }
 
 function renderProducts(productsArray){
-    if(listOfProducts.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
+    if(listOfShopProducts.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
         productsContainer.innerHTML = `Sorry, our products are coming soon. Please check back later.`;
         return;
     } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category.
@@ -109,7 +129,7 @@ function renderProducts(productsArray){
 }
 
 async function addTheProductInTheCart(button){
-    const addedProduct = findProductById(listOfProducts, button);
+    const addedProduct = findProductById(listOfShopProducts, button);
     if(addedProduct === undefined){ // If `addedProduct` is not found in the list, the function returns before the request is made; this prevents further operations with `undefined` and avoids showing the user an incorrect error.
         return;
     }

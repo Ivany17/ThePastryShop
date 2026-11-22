@@ -1,7 +1,7 @@
 //shared.js
-const serverAddress = 'http://localhost:5160';
+export const serverAddress = 'http://localhost:5160';
 
-const somethingWentWrongPhrase = 'Something went wrong. Please try again';
+export const somethingWentWrongPhrase = 'Something went wrong. Please try again';
 
 const logoHTML = `<a href="index.html">
         <h2>Charodiya</h2>
@@ -22,7 +22,7 @@ const addressHTML = `<address>
 
 const copyrightHTML = '<p>&copy; Charodiya, 2026</p>';
 
-function renderHeader(page){
+export function renderHeader(page){
     const header = document.getElementById('header-container');
     let headerHTML = logoHTML;
     switch(page){
@@ -45,7 +45,7 @@ function renderHeader(page){
     header.innerHTML = headerHTML;
 }
 
-function renderFooter(page){
+export function renderFooter(page){
     const footer = document.getElementById('footer-container');
     let footerHTML = logoHTML;
     footerHTML += addressHTML;
@@ -63,11 +63,11 @@ function renderFooter(page){
     footer.innerHTML = footerHTML;
 }
 
-function findProductById(listOfProducts, button){
+export function findProductById(listOfProducts, button){
     return listOfProducts.find(list => list.id === parseInt(button.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
 }
 
-function showToastMessage(textMessage){
+export function showToastMessage(textMessage){
     const toastContainer = document.getElementById('toastContainer');
     const toastMessage = document.createElement('p'); // create a new html element and saving it into the memory.
     toastMessage.textContent = textMessage;
@@ -76,7 +76,7 @@ function showToastMessage(textMessage){
 }
 
 // make the first letter uppercase, and all other letters in the word lowercase.
-function capitalizeEachWord(phrase){
+export function capitalizeEachWord(phrase){
     return phrase
         .toLowerCase()
         .trim() // trim() that removes extra spaces before and after a text should be used before the phrase is split; otherwise, these extra spaces will cause the code to fail.
@@ -85,20 +85,20 @@ function capitalizeEachWord(phrase){
         .join(' '); // If the string is empty, `word.charAt(0)` returns an empty string, on which `toUpperCase()` can be used, unlike word[0], which would break the code.
 }
 
-function removeExtraSpaces(phrase){
+export function removeExtraSpaces(phrase){
     return phrase.trim().replace(/\s+/g, ' '); // Remove extra spaces in the middle using .replace and at the beginning and at the end of a phrase using trim(), to prevent data containing extra spaces from reaching the server.
 }
 
-function hasTheFormEmptyFields(filledForm){
+export function hasTheFormEmptyFields(filledForm){
     return filledForm.Name.length === 0 || filledForm.Description.length === 0 || Number.isNaN(filledForm.Price) || filledForm.Price <= 0;
 }
 
 // Returns a price as text for display only, so that every price in the project looks the same and the format can be changed in one place.
-function showPriceWithTwoDecimalPlaces(price){
+export function showPriceWithTwoDecimalPlaces(price){
     return price.toFixed(2); // rounds the number to remove floating-point "tails" like 299.96999999999997, and returns text with exactly two digits after the decimal point.
 }
 
-function showErrorMessage(toastErrorMsg, consoleErrorMsg){
+export function showErrorMessage(toastErrorMsg, consoleErrorMsg){
     showToastMessage(toastErrorMsg);
     console.error(consoleErrorMsg);
 }
@@ -126,7 +126,7 @@ function replaceSingleQuote(text){
 }
 
 // A function that combines the five escape functions into a chain and invokes them in the correct order to escape text before inserting it into innerHTML.
-function safeHTMLcodes(text){
+export function safeHTMLcodes(text){
     const ampersand = replaceAmpersand(text);
     const leftAngleBracket = replaceLeftAngleBracket(ampersand);
     const rightAngleBracket = replaceRightAngleBracket(leftAngleBracket);

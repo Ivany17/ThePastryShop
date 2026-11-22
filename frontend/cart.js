@@ -1,18 +1,30 @@
 //cart.js
-const cartBtn = document.getElementById('cartBtn');
+import {
+    serverAddress,
+    somethingWentWrongPhrase,
+    showToastMessage,
+    capitalizeEachWord,
+    showPriceWithTwoDecimalPlaces,
+    showErrorMessage,
+    safeHTMLcodes
+} from './shared.js';
+
 const cartContainer = document.getElementById('cart-container');
 const containerForTotalPrice = document.getElementById('containerForTotalPrice');
 const containerForCards = document.getElementById('containerForCards');
 let cartData; // declare the variable outside so that all functions can use it.
 const buyBtn = document.getElementById('buyBtn');
 
-cartBtn.addEventListener('click', () => {
-    document.body.classList.toggle('openCartForBody');
-    cartContainer.classList.toggle('openCart'); // add and remove a class with a single click using `toggle`.
-    if(cartContainer.classList.contains('openCart')){ // if the class is added, load the product cards in the cart.
-        loadProductsInTheCart();
-    }
-});
+export function launchTheCart(){
+    const cartBtn = document.getElementById('cartBtn');
+    cartBtn.addEventListener('click', () => {
+        document.body.classList.toggle('openCartForBody');
+        cartContainer.classList.toggle('openCart'); // add and remove a class with a single click using `toggle`.
+        if(cartContainer.classList.contains('openCart')){ // if the class is added, load the product cards in the cart.
+            loadProductsInTheCart();
+        }
+    });
+}
 
 function findTheCardById(button){
     return cartData.find(cardInTheCart => cardInTheCart.productItem.id === parseInt(button.dataset.id, 10));
@@ -117,7 +129,7 @@ buyBtn.addEventListener('click', async () => {
 });
 
 const errorLoadingCartMessage = `We couldn't load the cart. Please try again later.`;
-async function loadProductsInTheCart(){
+export async function loadProductsInTheCart(){
     try {
         const getCartResponse = await fetch(`${serverAddress}/api/cart`);
         if(!getCartResponse.ok){ // catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.

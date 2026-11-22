@@ -1,4 +1,5 @@
 //app.js
+import { renderHeader, renderFooter } from './shared.js';
 renderHeader("welcome");
 renderFooter("welcome");
 
