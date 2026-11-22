@@ -1,5 +1,5 @@
 //shop.js
-let data;
+let listOfProducts;
 let currentProductsByCategory; // stores the current list of products in certain category.
 renderHeader('shop');
 renderFooter('shop');
@@ -24,19 +24,19 @@ function showCurrentListOfProducts(currentListOfProducts){
 }
 
 function showFilteredProductsByCategory(category){
-    if(!data){
+    if(!listOfProducts){
         return;
     }
-    const currentList = data.filter(p => p.category.toLowerCase() === category);
+    const currentList = listOfProducts.filter(p => p.category.toLowerCase() === category);
     showCurrentListOfProducts(currentList);
 }
 
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
-    if(!data){
+    if(!listOfProducts){
         return;
     }
-    showCurrentListOfProducts(data);
+    showCurrentListOfProducts(listOfProducts);
 });
 
 const headerCakesBtn = document.getElementById('headerCakesBtn');
@@ -72,11 +72,11 @@ async function loadProducts(){
             console.error(`Failed to load the products. The server returned an error with ${getResponse.status}`);
             return;
         }
-        data = await getResponse.json();
+        listOfProducts = await getResponse.json();
         if(!categoryParam){ // If the category parameter is missing from the address or is empty, then all products are displayed.
-            showCurrentListOfProducts(data);
+            showCurrentListOfProducts(listOfProducts);
         } else {
-            const filterByCategories = data.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
+            const filterByCategories = listOfProducts.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
             showCurrentListOfProducts(filterByCategories);
         }
     } catch (error){
@@ -86,7 +86,7 @@ async function loadProducts(){
 }
 
 function renderProducts(productsArray){
-    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
+    if(listOfProducts.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
         productsContainer.innerHTML = `Sorry, our products are coming soon. Please check back later.`;
         return;
     } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category.
@@ -109,7 +109,7 @@ function renderProducts(productsArray){
 }
 
 async function addTheProductInTheCart(button){
-    const addedProduct = findProductById(data, button);
+    const addedProduct = findProductById(listOfProducts, button);
     if(addedProduct === undefined){ // If `addedProduct` is not found in the list, the function returns before the request is made; this prevents further operations with `undefined` and avoids showing the user an incorrect error.
         return;
     }

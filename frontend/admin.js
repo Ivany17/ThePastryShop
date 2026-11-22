@@ -18,7 +18,7 @@ const editPhotoOfTheProduct = document.getElementById('editPhotoOfTheProduct');
 const saveChangesBtn = document.getElementById('saveChangesBtn');
 const cancelBtn = document.getElementById('cancelBtn');
 let currentEditId;
-let data;
+let listOfProducts;
 let currentProductsByCategory; // stores the current list of products in certain category.
 let currentCategory = null; // Stores the selected category. After adding, editing, or deleting a product, the user remains in the current category. `null` indicates that no specific category has been selected.
 
@@ -44,22 +44,22 @@ function showCurrentListOfProducts(currentListOfProducts){
 }
 
 function showFilteredProductsByCategory(category){
-    if(!data){
+    if(!listOfProducts){
         return;
     }
-    const currentList = data.filter(p => p.category.toLowerCase() === category);
+    const currentList = listOfProducts.filter(p => p.category.toLowerCase() === category);
     currentCategory = category;
     showCurrentListOfProducts(currentList);
 }
 
 const headerAllBtn = document.getElementById('headerAllBtn');
 headerAllBtn.addEventListener('click', () => {
-    if(!data){
+    if(!listOfProducts){
         return;
     }
     currentCategory = null;
     searchProducts.value = '';
-    showCurrentListOfProducts(data);
+    showCurrentListOfProducts(listOfProducts);
 });
 
 const headerCakesBtn = document.getElementById('headerCakesBtn');
@@ -88,11 +88,11 @@ async function loadAdminProducts(){
             console.error(`Failed to load the products. The server returned an error with ${getResponse.status}`);
             return;
         }
-        data = await getResponse.json();
+        listOfProducts = await getResponse.json();
         if(currentCategory){
             showFilteredProductsByCategory(currentCategory);
         } else {
-            showCurrentListOfProducts(data);
+            showCurrentListOfProducts(listOfProducts);
         }
         filterAndShowByName();
     } catch (error){
@@ -102,7 +102,7 @@ async function loadAdminProducts(){
 }
 
 function renderAdminProducts(productsArray){
-    if(data.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
+    if(listOfProducts.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
         productsContainer.innerHTML = `There are no products yet`;
         return;
     } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category.
@@ -126,35 +126,36 @@ function renderAdminProducts(productsArray){
 
 function findRemoveAndEditBtns(){
     const removeBtn = document.querySelectorAll('.removeBtn');
-    removeBtn.forEach(b => {
-        b.addEventListener('click', async () => {
-            const removedProduct = findProductById(data, b);
+    removeBtn.forEach(button => {
+        button.addEventListener('click', async () => {
+            const removedProduct = findProductById(listOfProducts, button);
             if(removedProduct === undefined){ // If `removedProduct` is not found in the list, the function returns before reaching `confirm` and the request, to avoid working with `undefined`.
                 return;
             }
-            if(!confirm(`Do you really want to delete ${capitalizeEachWord(removedProduct.name)}?`)){
+            const nameOfTheProduct = capitalizeEachWord(removedProduct.name);
+            if(!confirm(`Do you really want to delete ${nameOfTheProduct}?`)){
                 return;
             } else {
                 try {
-                    const removeResponse = await fetch(`${serverAddress}/api/products/${b.dataset.id}`, {
+                    const removeResponse = await fetch(`${serverAddress}/api/products/${button.dataset.id}`, {
                         method: 'DELETE',
                     });
                     loadAdminProducts();
                     if(removeResponse.ok){
-                        showToastMessage(`${capitalizeEachWord(removedProduct.name)} deleted successfully`);
+                        showToastMessage(`${nameOfTheProduct} deleted successfully`);
                     } else {
-                        showErrorMessage(`${capitalizeEachWord(removedProduct.name)} was not deleted`, `Failed to delete the product. The server returned an error with ${removeResponse.status}`);
+                        showErrorMessage(`${nameOfTheProduct} was not deleted`, `Failed to delete the product. The server returned an error with ${removeResponse.status}`);
                     }
                 } catch (error){
-                    showErrorMessage(`${capitalizeEachWord(removedProduct.name)} was not deleted. Check if the server is running.`, error);
+                    showErrorMessage(`${nameOfTheProduct} was not deleted. Check if the server is running.`, error);
                 }
             }
         });
     });
     const editBtn = document.querySelectorAll('.editBtn');
-    editBtn.forEach(b => {
-        b.addEventListener('click', () => { // Find the product with its id, not with saving it in HTML to avoid errors from/with special characters.
-            const editProduct = findProductById(data, b);
+    editBtn.forEach(button => {
+        button.addEventListener('click', () => { // Find the product with its id, not with saving it in HTML to avoid errors from/with special characters.
+            const editProduct = findProductById(listOfProducts, button);
             if(editProduct === undefined){
                 return;
             }
@@ -181,6 +182,7 @@ addProductBtn.addEventListener('click', async () => {
         showToastMessage('All fields must be filled in. And the price must be greater than 0');
         return;
     }
+    const nameOfTheProduct = capitalizeEachWord(newProduct.Name);
     addProductBtn.disabled = true;
     try {
         const postResponse = await fetch(`${serverAddress}/api/products`, {
@@ -195,12 +197,12 @@ addProductBtn.addEventListener('click', async () => {
             inputPriceOfTheProduct.value = '';
             inputPhotoOfTheProduct.value = ''; // clearing the plain text, not the array that is created within the object.
             productCategories.selectedIndex = 0; // reset the drop-down list—where the first option equals 0—so that the category is set back to the default for the next product.
-            showToastMessage(`${capitalizeEachWord(newProduct.Name)} added successfully to the ${capitalizeEachWord(newProduct.Category)} category`); // at this moment, the form fields have already been cleared, and the object still holds the values.
+            showToastMessage(`${nameOfTheProduct} added successfully to the ${capitalizeEachWord(newProduct.Category)} category`); // at this moment, the form fields have already been cleared, and the object still holds the values.
         } else {
-            showErrorMessage(`${capitalizeEachWord(newProduct.Name)} was not added`, `Failed to add the product. The server returned an error with ${postResponse.status}`);
+            showErrorMessage(`${nameOfTheProduct} was not added`, `Failed to add the product. The server returned an error with ${postResponse.status}`);
         }
     } catch (error){
-        showErrorMessage(`${capitalizeEachWord(newProduct.Name)} was not added. Check if the server is running.`, error);
+        showErrorMessage(`${nameOfTheProduct} was not added. Check if the server is running.`, error);
     } finally {
         addProductBtn.disabled = false;
     }
@@ -220,6 +222,7 @@ saveChangesBtn.addEventListener('click', async () => {
         showToastMessage('All fields must be filled in. And the price must be greater than 0');
         return;
     }
+    const nameOfTheProduct = capitalizeEachWord(changedProduct.Name);
     saveChangesBtn.disabled = true;
     try {
         const putResponse = await fetch(`${serverAddress}/api/products/${currentEditId}`, {
@@ -230,12 +233,12 @@ saveChangesBtn.addEventListener('click', async () => {
         loadAdminProducts();
         if(putResponse.ok){
             modalOverlay.style.display = 'none'; // hide the modal window.
-            showToastMessage(`${capitalizeEachWord(changedProduct.Name)} was changed`);
+            showToastMessage(`${nameOfTheProduct} was changed`);
         } else {
-            showErrorMessage(`${capitalizeEachWord(changedProduct.Name)} was not changed`, `Failed to change the product. The server returned an error with ${putResponse.status}`);
+            showErrorMessage(`${nameOfTheProduct} was not changed`, `Failed to change the product. The server returned an error with ${putResponse.status}`);
         }
     } catch (error){
-        showErrorMessage(`${capitalizeEachWord(changedProduct.Name)} was not changed. Check if the server is running.`, error);
+        showErrorMessage(`${nameOfTheProduct} was not changed. Check if the server is running.`, error);
     } finally {
         saveChangesBtn.disabled = false;
     }
