@@ -22,7 +22,7 @@ const addressHTML = `<address>
 
 const copyrightHTML = '<p>&copy; Charodiya, 2026</p>';
 
-export function renderHeader(page){
+export function renderHeader(page){ // With export, a file can make functions and variables accessible so that other files can use them. Without export, everything remains inside the file.
     const header = document.getElementById('header-container');
     let headerHTML = logoHTML;
     switch(page){

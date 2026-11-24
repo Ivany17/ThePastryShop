@@ -1,5 +1,5 @@
 //cart.js
-import {
+import { // Thanks to imports, the file can access the functions and variables from `shared.js`. The import line immediately reveals the file's dependencies.
     serverAddress,
     somethingWentWrongPhrase,
     showToastMessage,
@@ -15,7 +15,7 @@ const containerForCards = document.getElementById('containerForCards');
 let cartData; // declare the variable outside so that all functions can use it.
 const buyBtn = document.getElementById('buyBtn');
 
-export function launchTheCart(){
+export function launchTheCart(){ // This function looks for the `cartBtn` and attaches a click handler to it that opens the cart. It is called only after the `cartBtn` is created, because otherwise `getElementById` would have returned `null`.
     const cartBtn = document.getElementById('cartBtn');
     cartBtn.addEventListener('click', () => {
         document.body.classList.toggle('openCartForBody');

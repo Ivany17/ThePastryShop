@@ -1,5 +1,5 @@
 //shop.js
-import {
+import { // Thanks to imports, the file can access the functions and variables from `shared.js`. The import line immediately reveals the file's dependencies.
     renderHeader,
     renderFooter,
     serverAddress,
@@ -19,26 +19,52 @@ import {
 
 let listOfShopProducts;
 let currentProductsByCategory; // stores the current list of products in certain category.
-renderHeader('shop');
-renderFooter('shop');
-
-launchTheCart();
-
 const queryString = window.location.search; // get queryString - the part of address with "?" and further.
 const params = new URLSearchParams(queryString); // make the object from the string.
 const categoryParam = params.get('category'); // get the value from the category to filter by category.
+const productsContainer = document.getElementById('products-container');
+
+renderHeader('shop');
+renderFooter('shop');
 
 const searchProducts = document.getElementById('searchProducts');
+
+const headerAllBtn = document.getElementById('headerAllBtn');
+const headerCakesBtn = document.getElementById('headerCakesBtn');
+const headerPastriesBtn = document.getElementById('headerPastriesBtn');
+const headerCookiesBtn = document.getElementById('headerCookiesBtn');
+
+launchTheCart();
+
+headerAllBtn.addEventListener('click', () => {
+    if(!listOfShopProducts){
+        return;
+    }
+    showCurrentListOfProducts(listOfShopProducts);
+});
+
+headerCakesBtn.addEventListener('click', () => {
+    showFilteredProductsByCategory('cake');
+});
+
+headerPastriesBtn.addEventListener('click', () => {
+    showFilteredProductsByCategory('pastry');
+});
+
+headerCookiesBtn.addEventListener('click', () => {
+    showFilteredProductsByCategory('cookie');
+});
+
 searchProducts.addEventListener('input', () => {
     if(!currentProductsByCategory){ // If the list of products fails to load for any reason, the `return` prevents .filter from being called on undefined.
         return;
     }
-    const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase()))); // search only in certain category.
+    const filteredByName = currentProductsByCategory.filter(product => product.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase()))); // search only in certain category.
     renderProducts(filteredByName);
 });
 
 function showCurrentListOfProducts(currentListOfProducts){
-    currentProductsByCategory = [...currentListOfProducts].sort((a, b) => b.id - a.id); // sorts a copy so the original list stays unchanged; the sorted list is stored here so that search filters it and keeps the newest-first order (a larger id means a newer product).
+    currentProductsByCategory = [...currentListOfProducts].sort((firstProduct, secondProduct) => secondProduct.id - firstProduct.id); // sorts a copy so the original list stays unchanged; the sorted list is stored here so that search filters it and keeps the newest-first order (a larger id means a newer product).
     renderProducts(currentProductsByCategory);
     searchProducts.value = '';
 }
@@ -47,35 +73,11 @@ function showFilteredProductsByCategory(category){
     if(!listOfShopProducts){
         return;
     }
-    const currentList = listOfShopProducts.filter(p => p.category.toLowerCase() === category);
+    const currentList = listOfShopProducts.filter(product => product.category.toLowerCase() === category);
     showCurrentListOfProducts(currentList);
 }
 
-const headerAllBtn = document.getElementById('headerAllBtn');
-headerAllBtn.addEventListener('click', () => {
-    if(!listOfShopProducts){
-        return;
-    }
-    showCurrentListOfProducts(listOfShopProducts);
-});
-
-const headerCakesBtn = document.getElementById('headerCakesBtn');
-headerCakesBtn.addEventListener('click', () => {
-    showFilteredProductsByCategory('cake');
-});
-
-const headerPastriesBtn = document.getElementById('headerPastriesBtn');
-headerPastriesBtn.addEventListener('click', () => {
-    showFilteredProductsByCategory('pastry');
-});
-
-const headerCookiesBtn = document.getElementById('headerCookiesBtn');
-headerCookiesBtn.addEventListener('click', () => {
-    showFilteredProductsByCategory('cookie');
-});
-
-const productsContainer = document.getElementById('products-container');
-productsContainer.addEventListener('click', (event) => {
+productsContainer.addEventListener('click', (event) => { // Attach an event handler to a persistent container so that the handler remains after the container's content is re-rendered.
     const addBtn = event.target.closest('.addBtn');
     if(addBtn === null){
         return;
@@ -96,7 +98,7 @@ async function loadProducts(){
         if(!categoryParam){ // If the category parameter is missing from the address or is empty, then all products are displayed.
             showCurrentListOfProducts(listOfShopProducts);
         } else {
-            const filterByCategories = listOfShopProducts.filter(p => p.category.toLowerCase() === categoryParam.toLowerCase());
+            const filterByCategories = listOfShopProducts.filter(product => product.category.toLowerCase() === categoryParam.toLowerCase());
             showCurrentListOfProducts(filterByCategories);
         }
     } catch (error){
@@ -106,25 +108,26 @@ async function loadProducts(){
 }
 
 function renderProducts(productsArray){
-    if(listOfShopProducts.length === 0){ // if there are no products from the server at all, this check runs first; otherwise, the message 'This item is not found' would have triggered earlier.
-        productsContainer.innerHTML = `Sorry, our products are coming soon. Please check back later.`;
+    if(listOfShopProducts.length === 0){ // If the shop contains no products, this check is performed first; otherwise, the user would see the wrong message.
+        productsContainer.innerHTML = 'Sorry, our products are coming soon. Please check back later.';
         return;
     } else if(productsArray.length === 0){ // if the product is not found in the search or in a specific category.
-        productsContainer.innerHTML = `Unfortunately, this product was not found. Try searching for another product.`;
+        productsContainer.innerHTML = 'Unfortunately, this product was not found. Try searching for another product.';
         return;
     }
-    const productsHTML = productsArray
-        .map(p => { // Capitalize first letter in every word in name and category for display only (data doesn't change).
-            return `
+    const productsHTML = productsArray.map(product => { // Capitalize first letter in every word in name and category for display only (data doesn't change).
+        const nameOfProductForHTML = safeHTMLcodes(capitalizeEachWord(product.name));
+        // The Add button has an `aria-label` so that a screen reader can announce which product is being added.
+        return `
             <div class="product-card">
-                <h3>${safeHTMLcodes(capitalizeEachWord(p.name))}</h3>
-                <p>${safeHTMLcodes(capitalizeEachWord(p.category))}</p>
-                <p>${safeHTMLcodes(p.description)}</p>
-                <p>${showPriceWithTwoDecimalPlaces(p.price)} ₴</p>
-                <button class="addBtn" data-id="${p.id}">Add</button>
+                <h3>${nameOfProductForHTML}</h3>
+                <p>${safeHTMLcodes(capitalizeEachWord(product.category))}</p>
+                <p>${safeHTMLcodes(product.description)}</p>
+                <p>${showPriceWithTwoDecimalPlaces(product.price)} ₴</p>
+                <button class="addBtn" data-id="${product.id}" aria-label="Add ${nameOfProductForHTML} to the cart">Add</button>
             </div>
-        `;})
-        .join('');
+        `;
+    }).join('');
     productsContainer.innerHTML = productsHTML;
 }
 

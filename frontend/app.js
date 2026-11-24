@@ -1,5 +1,6 @@
 //app.js
-import { renderHeader, renderFooter } from './shared.js';
+import { renderHeader, renderFooter } from './shared.js'; // Thanks to imports, the file can access the functions from `shared.js`. The import line immediately reveals the file's dependencies.
+
 renderHeader("welcome");
 renderFooter("welcome");
 

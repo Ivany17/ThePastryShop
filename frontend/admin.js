@@ -1,5 +1,5 @@
 //admin.js
-import {
+import { // Thanks to imports, the file can access the functions and variables from `shared.js`. The import line immediately reveals the file's dependencies.
     renderHeader,
     renderFooter,
     serverAddress,
@@ -38,12 +38,11 @@ let currentCategory = null; // Stores the selected category. After adding, editi
 
 // It is called from the search handler and the `loadAdminProducts` function, and it filters the list based on the search field value so that the screen matches the field after the data is updated.
 function filterAndShowByName(){
-    if(!currentProductsByCategory){  // If the list of products fails to load for any reason, the `return` prevents .filter from being called on undefined.
+    if(!currentProductsByCategory){ // If the list of products fails to load for any reason, the `return` prevents .filter from being called on undefined.
         return;
     }
     const filteredByName = currentProductsByCategory.filter(p => p.name.toLowerCase().includes(removeExtraSpaces(searchProducts.value.toLowerCase())));
     renderAdminProducts(filteredByName);
-    findRemoveAndEditBtns();
 }
 
 const searchProducts = document.getElementById('searchProducts');
@@ -54,7 +53,6 @@ searchProducts.addEventListener('input', () => {
 function showCurrentListOfProducts(currentListOfProducts){
     currentProductsByCategory = currentListOfProducts;
     renderAdminProducts(currentProductsByCategory);
-    findRemoveAndEditBtns();
 }
 
 function showFilteredProductsByCategory(category){
@@ -138,51 +136,54 @@ function renderAdminProducts(productsArray){
     productsContainer.innerHTML = productsHTML;
 }
 
-function findRemoveAndEditBtns(){
-    const removeBtn = document.querySelectorAll('.removeBtn');
-    removeBtn.forEach(button => {
-        button.addEventListener('click', async () => {
-            const removedProduct = findProductById(listOfAdminProducts, button);
-            if(removedProduct === undefined){ // If `removedProduct` is not found in the list, the function returns before reaching `confirm` and the request, to avoid working with `undefined`.
-                return;
-            }
-            const nameOfTheProduct = capitalizeEachWord(removedProduct.name);
-            if(!confirm(`Do you really want to delete ${nameOfTheProduct}?`)){
-                return;
+async function deleteProduct(button){
+    const removedProduct = findProductById(listOfAdminProducts, button);
+    if(removedProduct === undefined){ // If `removedProduct` is not found in the list, the function returns before reaching `confirm` and the request, to avoid working with `undefined`.
+        return;
+    }
+    const nameOfTheProduct = capitalizeEachWord(removedProduct.name);
+    if(!confirm(`Do you really want to delete ${nameOfTheProduct}?`)){
+        return;
+    } else {
+        try {
+            const removeResponse = await fetch(`${serverAddress}/api/products/${button.dataset.id}`, {
+                method: 'DELETE',
+            });
+            loadAdminProducts();
+            if(removeResponse.ok){
+                showToastMessage(`${nameOfTheProduct} deleted successfully`);
             } else {
-                try {
-                    const removeResponse = await fetch(`${serverAddress}/api/products/${button.dataset.id}`, {
-                        method: 'DELETE',
-                    });
-                    loadAdminProducts();
-                    if(removeResponse.ok){
-                        showToastMessage(`${nameOfTheProduct} deleted successfully`);
-                    } else {
-                        showErrorMessage(`${nameOfTheProduct} was not deleted`, `Failed to delete the product. The server returned an error with ${removeResponse.status}`);
-                    }
-                } catch (error){
-                    showErrorMessage(`${nameOfTheProduct} was not deleted. Check if the server is running.`, error);
-                }
+                showErrorMessage(`${nameOfTheProduct} was not deleted`, `Failed to delete the product. The server returned an error with ${removeResponse.status}`);
             }
-        });
-    });
-    const editBtn = document.querySelectorAll('.editBtn');
-    editBtn.forEach(button => {
-        button.addEventListener('click', () => { // Find the product with its id, not with saving it in HTML to avoid errors from/with special characters.
-            const editProduct = findProductById(listOfAdminProducts, button);
-            if(editProduct === undefined){
-                return;
-            }
-            editNameOfTheProduct.value = editProduct.name;
-            editDescriptionOfTheProduct.value = editProduct.description;
-            editPriceOfTheProduct.value = editProduct.price;
-            editProductCategories.value = editProduct.category.toLowerCase(); // to compare two values from drop-down list and from database, where one value can be with the capital letter.
-            editPhotoOfTheProduct.value = editProduct.photoLinks;
-            modalOverlay.style.display = 'flex';
-            currentEditId = editProduct.id;
-        });
-    });
+        } catch (error){
+            showErrorMessage(`${nameOfTheProduct} was not deleted. Check if the server is running.`, error);
+        }
+    }
 }
+
+function openEditWindow(button){
+    const editedProduct = findProductById(listOfAdminProducts, button);
+    if(editedProduct === undefined){
+        return;
+    }
+    editNameOfTheProduct.value = editedProduct.name;
+    editDescriptionOfTheProduct.value = editedProduct.description;
+    editPriceOfTheProduct.value = editedProduct.price;
+    editProductCategories.value = editedProduct.category.toLowerCase(); // to compare two values from drop-down list and from database, where one value can be with the capital letter.
+    editPhotoOfTheProduct.value = editedProduct.photoLinks;
+    modalOverlay.style.display = 'flex';
+    currentEditId = editedProduct.id;
+}
+
+productsContainer.addEventListener('click', (event) => {
+    const removeBtn = event.target.closest('.removeBtn');
+    const editBtn = event.target.closest('.editBtn');
+    if(removeBtn){
+        deleteProduct(removeBtn);
+    } else if(editBtn){
+        openEditWindow(editBtn);
+    }
+});
 
 addProductBtn.addEventListener('click', async () => {
     const newProduct = {
