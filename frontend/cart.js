@@ -6,7 +6,8 @@ import { // Thanks to imports, the file can access the functions and variables f
     capitalizeEachWord,
     showPriceWithTwoDecimalPlaces,
     showErrorMessage,
-    safeHTMLcodes
+    safeHTMLcodes,
+    getButtonId
 } from './shared.js';
 
 const cartContainer = document.getElementById('cart-container');
@@ -15,7 +16,8 @@ const containerForCards = document.getElementById('containerForCards');
 let cartData; // Declare the variable outside so that all functions can use it.
 const buyBtn = document.getElementById('buyBtn');
 
-export function launchTheCart(){ // This function looks for the `cartBtn` and attaches a click handler to it that opens the cart. It is called only after the `cartBtn` is created, because otherwise `getElementById` would have returned `null`.
+// This function looks for the `cartBtn` and attaches a click handler to it that opens the cart. It is called only after the `cartBtn` is created, because otherwise `getElementById` would have returned `null`.
+export function launchTheCart(){
     const cartBtn = document.getElementById('cartBtn');
     cartBtn.addEventListener('click', () => {
         document.body.classList.toggle('openCartForBody');
@@ -27,7 +29,8 @@ export function launchTheCart(){ // This function looks for the `cartBtn` and at
 }
 
 function findTheCardById(button){
-    return cartData.find(cardInTheCart => cardInTheCart.productItem.id === parseInt(button.dataset.id, 10));
+    const buttonId = getButtonId(button);
+    return cartData.find(cardInTheCart => cardInTheCart.productItem.id === buttonId);
 }
 
 async function changeProductQuantity(quantityBtn){
@@ -169,7 +172,7 @@ function renderProductsInTheCart(listOfCards, sumOfProductPrices){
         containerForCards.innerHTML = 'The cart is empty';
         return;
     }
-    const sortedCopyOfCards = [...listOfCards].sort((a, b) => new Date(b.addedAt) - new Date(a.addedAt)); // Sorts a copy, not the original list, so that drawing the cart does not change the order of cartData; the text is converted into a date to sort from newest to oldest.
+    const sortedCopyOfCards = [...listOfCards].sort((firstCard, secondCard) => new Date(secondCard.addedAt) - new Date(firstCard.addedAt)); // Sorts a copy, not the original list, so that drawing the cart does not change the order of cartData; the text is converted into a date to sort from newest to oldest.
     const productsHTML = sortedCopyOfCards.map((cardInTheCart) => {
         const productInTheCard = cardInTheCart.productItem;
         const nameOfProductForHTML = safeHTMLcodes(capitalizeEachWord(productInTheCard.name));

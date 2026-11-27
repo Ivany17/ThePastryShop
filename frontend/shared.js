@@ -64,12 +64,13 @@ export function renderFooter(page){
 }
 
 export function findProductById(listOfProducts, button){
-    return listOfProducts.find(product => product.id === parseInt(button.dataset.id, 10)); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
+    const buttonId = getButtonId(button);
+    return listOfProducts.find(product => product.id === buttonId);
 }
 
 export function showToastMessage(textMessage){
     const toastContainer = document.getElementById('toastContainer');
-    const toastMessage = document.createElement('p'); // Create a new html element and saving it into the memory.
+    const toastMessage = document.createElement('p'); // Create a new HTML element and save it into the memory.
     toastMessage.textContent = textMessage;
     toastContainer.append(toastMessage); // Add new element to the block and show it.
     setTimeout(() => toastMessage.remove(), 3000); // An arrow function is needed to delete an element in 3 seconds, rather than immediately.
@@ -101,6 +102,10 @@ export function showPriceWithTwoDecimalPlaces(price){
 export function showErrorMessage(toastErrorMsg, consoleErrorMsg){
     showToastMessage(toastErrorMsg);
     console.error(consoleErrorMsg);
+}
+
+export function getButtonId(button){
+    return parseInt(button.dataset.id, 10); // To prevent parseInt from having to guess the number system, the number 10 after the comma indicates that this is definitely a decimal number.
 }
 
 // This block replaces dangerous characters with safe ones before they reach `innerHTML`, ensuring the text is displayed as plain text.

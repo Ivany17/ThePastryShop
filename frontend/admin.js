@@ -19,7 +19,7 @@ let currentAdminProductsByCategory; // Stores the current list of products in ce
 let currentCategory = null; // Stores the selected category. After adding, editing, or deleting a product, the user remains in the current category. `null` indicates that no specific category has been selected.
 const adminProductsContainer = document.getElementById('products-container');
 const inputNameOfTheProduct = document.getElementById('inputNameOfTheProduct');
-const descriptionOfTheProduct = document.getElementById('descriptionOfTheProduct');
+const inputDescriptionOfTheProduct = document.getElementById('descriptionOfTheProduct');
 const inputPriceOfTheProduct = document.getElementById('inputPriceOfTheProduct');
 const productCategories = document.getElementById('product-categories');
 const inputPhotoOfTheProduct = document.getElementById('inputPhotoOfTheProduct');
@@ -143,8 +143,8 @@ function renderAdminProducts(productsArray){
     adminProductsContainer.innerHTML = productsHTML;
 }
 
-async function removeProduct(button){
-    const productToRemove = findProductById(listOfAdminProducts, button);
+async function removeProduct(removeBtn){
+    const productToRemove = findProductById(listOfAdminProducts, removeBtn);
     if(productToRemove === undefined){ // If `productToRemove` is not found in the list, the function returns before reaching `confirm` and the request, to avoid working with `undefined`.
         return;
     }
@@ -152,9 +152,9 @@ async function removeProduct(button){
     if(!confirm(`Do you really want to remove ${nameOfTheProduct}?`)){
         return;
     }
-    button.disabled = true;
+    removeBtn.disabled = true;
     try {
-        const removeResponse = await fetch(`${serverAddress}/api/products/${button.dataset.id}`, {
+        const removeResponse = await fetch(`${serverAddress}/api/products/${removeBtn.dataset.id}`, {
             method: 'DELETE',
         });
         loadAdminProducts();
@@ -165,12 +165,12 @@ async function removeProduct(button){
         }
     } catch (error){
         showErrorMessage(`${nameOfTheProduct} was not removed. Check if the server is running.`, error);
-        button.disabled = false;
+        removeBtn.disabled = false;
     }
 }
 
-function openEditWindow(button){
-    const productToEdit = findProductById(listOfAdminProducts, button);
+function openEditWindow(editBtn){
+    const productToEdit = findProductById(listOfAdminProducts, editBtn);
     if(productToEdit === undefined){
         return;
     }
@@ -197,7 +197,7 @@ addProductBtn.addEventListener('click', async () => {
     const newProduct = {
         Name: removeExtraSpaces(inputNameOfTheProduct.value), // From shared.js to prevent data containing extra spaces from reaching the server.
         Category: productCategories.value,
-        Description: removeExtraSpaces(descriptionOfTheProduct.value),
+        Description: removeExtraSpaces(inputDescriptionOfTheProduct.value),
         Price: parseFloat(inputPriceOfTheProduct.value),
         PhotoLinks: [inputPhotoOfTheProduct.value],
     };
@@ -216,7 +216,7 @@ addProductBtn.addEventListener('click', async () => {
         loadAdminProducts();
         if(postResponse.ok){ // Clear form fields and display a toast message only if the response from the server is successful. Therefore, in the event of an error, the form remains filled out, and the administrator can correct the data.
             inputNameOfTheProduct.value = ''; // Clearing the field after sending data to the server.
-            descriptionOfTheProduct.value = '';
+            inputDescriptionOfTheProduct.value = '';
             inputPriceOfTheProduct.value = '';
             inputPhotoOfTheProduct.value = ''; // Clearing the plain text, not the array that is created within the object.
             productCategories.selectedIndex = 0; // Reset the drop-down list—where the first option equals 0—so that the category is set back to the default for the next product.

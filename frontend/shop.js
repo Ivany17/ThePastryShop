@@ -59,12 +59,12 @@ searchShopProducts.addEventListener('input', () => {
         return;
     }
     const filteredByName = currentShopProductsByCategory.filter(product => product.name.toLowerCase().includes(removeExtraSpaces(searchShopProducts.value.toLowerCase()))); // Search only in certain category.
-    renderProducts(filteredByName);
+    renderShopProducts(filteredByName);
 });
 
 function showCurrentListOfProducts(currentListOfProducts){
     currentShopProductsByCategory = [...currentListOfProducts].sort((firstProduct, secondProduct) => secondProduct.id - firstProduct.id); // Sorts a copy so the original list stays unchanged; the sorted list is stored here so that search filters it and keeps the newest-first order (a larger id means a newer product).
-    renderProducts(currentShopProductsByCategory);
+    renderShopProducts(currentShopProductsByCategory);
     searchShopProducts.value = '';
 }
 
@@ -76,14 +76,14 @@ function showFilteredProductsByCategory(category){
     showCurrentListOfProducts(currentList);
 }
 
-async function addProductToTheCart(button){
-    const productToAdd = findProductById(listOfShopProducts, button);
+async function addProductToTheCart(addBtn){
+    const productToAdd = findProductById(listOfShopProducts, addBtn);
     if(productToAdd === undefined){ // If `productToAdd` is not found in the list, the function returns before the request is made; this prevents further operations with `undefined` and avoids showing the user an incorrect error.
         return;
     }
     const nameOfTheProduct = capitalizeEachWord(productToAdd.name);
     try {
-        const postResponse = await fetch(`${serverAddress}/api/cart/${button.dataset.id}`, { method: 'POST' }); // To add the product in the cart on the server.
+        const postResponse = await fetch(`${serverAddress}/api/cart/${addBtn.dataset.id}`, { method: 'POST' }); // To add the product in the cart on the server.
         loadProductsInTheCart(); // A function from cart.js that runs after any reply from the server, successful or not, so that the cart on the screen always matches the server data.
         if(postResponse.ok){
             showToastMessage(`${nameOfTheProduct} was added to the cart`);
@@ -103,12 +103,12 @@ shopProductsContainer.addEventListener('click', (event) => { // A single event h
     addProductToTheCart(addBtn);
 });
 
-const errorLoadingMessage = `We couldn't load the products. Please try again later.`;
+const errorLoadingProductsMessage = `We couldn't load the products. Please try again later.`;
 async function loadProducts(){
     try {
         const getResponse = await fetch(`${serverAddress}/api/products`);
         if(!getResponse.ok){ // Catch only handles an unreachable server, so a server error response is stopped here before it is read as a list.
-            shopProductsContainer.innerHTML = errorLoadingMessage;
+            shopProductsContainer.innerHTML = errorLoadingProductsMessage;
             console.error(`Failed to load the products. The server returned an error with ${getResponse.status}`);
             return;
         }
@@ -120,12 +120,12 @@ async function loadProducts(){
             showCurrentListOfProducts(filterByCategories);
         }
     } catch (error){
-        shopProductsContainer.innerHTML = errorLoadingMessage;
+        shopProductsContainer.innerHTML = errorLoadingProductsMessage;
         console.error(error); // Outputs the actual cause of the error to the console for the developer.
     }
 }
 
-function renderProducts(productsArray){
+function renderShopProducts(productsArray){
     if(listOfShopProducts.length === 0){ // If the shop contains no products, this check is performed first; otherwise, the user would see the wrong message.
         shopProductsContainer.innerHTML = 'Sorry, our products are coming soon. Please check back later.';
         return;
